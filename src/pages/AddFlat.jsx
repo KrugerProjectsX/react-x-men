@@ -1,11 +1,11 @@
-
+import FlatForm from "./components/FlatForm";
 
 const AddFlat = () => {
   return (
     <div>
-        <AddFlat/>
+      <FlatForm></FlatForm>
     </div>
-  )
-}
+  );
+};
 
-export default AddFlat
+export default AddFlat;

@@ -2,14 +2,15 @@ import { Box, TextField } from "@mui/material";
 import { useRef } from "react";
 
 export default function FlatForm(){
-    const city:  = useRef("");    
-    const Streat Name:  = useRef("")
-    const Streat Number:  = useRef("")
-    const Area Size:  = useRef("")
-    const Has AC:  = useRef("")
-    const Year Built:  = useRef("")
-    const Rent Price:  = useRef("")
-    const Date Availlable:  = useRef("")
+    const city  = useRef("");    
+    const streatName  = useRef("")
+    const streatNumber  = useRef("")
+    const areaSize  = useRef("")
+    const hasAc  = useRef("")
+    const yearBuilt  = useRef("")
+    const rentPrice  = useRef("")
+    const dateAvailable  = useRef("")
+    const ref= collection()
 
     
     const handleSubmit =(FormData)= void =() {
