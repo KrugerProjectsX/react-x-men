@@ -1,10 +1,10 @@
-import React from "react";
+import FlatList from "./components/FlatList";
 
 const Flats = () => {
   return (
     <div>
       Flats bienvenido
-      <p></p>
+      <FlatList></FlatList>
     </div>
   );
 };
