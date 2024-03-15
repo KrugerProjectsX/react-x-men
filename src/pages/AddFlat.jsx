@@ -1,4 +1,4 @@
-import FlatForm from "./components/FlatForm";
+import FlatForm from "../components/FlatForm";
 
 const AddFlat = () => {
   return (

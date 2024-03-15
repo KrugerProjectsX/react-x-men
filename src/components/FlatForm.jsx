@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { db } from "../../firebase";
+import { db } from "../firebase";
 import { addDoc, collection } from "firebase/firestore";
 import { Box, Button, Switch, TextField } from "@mui/material";
 

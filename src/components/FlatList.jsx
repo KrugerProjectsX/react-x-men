@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import ShowModal from "./ShowModal";
 import DeleteFlatButton from "./DeleteFlatButton";
-import { db } from "../../firebase";
+import { db } from "../firebase";
 
 const FlatList = () => {
   const [flats, setFlats] = useState([]);
@@ -39,7 +39,6 @@ const FlatList = () => {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Has Dog</TableCell>
               <TableCell align="right">Ciudad</TableCell>
               <TableCell align="right">Nombre de Calle</TableCell>
               <TableCell align="right">Número de Calle</TableCell>
@@ -56,26 +55,24 @@ const FlatList = () => {
                 key={row.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell align="right">
-                  {row.hasDog ? "true" : "false"}
-                </TableCell>
                 <TableCell align="right">{row.city}</TableCell>
                 <TableCell align="right">{row.streetName}</TableCell>
                 <TableCell align="right">{row.streetNumber}</TableCell>
                 <TableCell align="right">{row.areaSize}</TableCell>
-                <TableCell align="right">{row.hasAc}</TableCell>
+                <TableCell align="right">{row.hasAc ? "Si" : "No"}</TableCell>
                 <TableCell align="right">{row.yearBuilt}</TableCell>
                 <TableCell align="right">{row.rentPrice}</TableCell>
                 <TableCell align="right">{row.dateAvailable}</TableCell>
 
                 <TableCell align="right">
-                  <ShowModal id={row.id} setFlag={setFlat} />
+                  <ShowModal id={row.id} setFlat={setFlat} />
                 </TableCell>
                 <TableCell align="right">
                   <DeleteFlatButton
                     id={row.id}
-                    setFlag={setFlat}
-                  ></DeleteFlatButton>
+                    setFlat={setFlat}
+                  >
+                   </DeleteFlatButton>
                 </TableCell>
               </TableRow>
             ))}

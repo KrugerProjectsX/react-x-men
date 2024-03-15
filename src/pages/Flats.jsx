@@ -1,4 +1,5 @@
-import FlatList from "./components/FlatList";
+import FlatList from "../components/FlatList";
+
 
 const Flats = () => {
   return (

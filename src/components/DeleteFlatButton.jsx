@@ -1,6 +1,7 @@
 import { Button } from "@mui/material";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { deleteDoc, doc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db } from "../firebase";
 
 const DeleteFlatButton = ({ id, setFlat }) => {
   const refDoc = doc(db, "flats", id);
@@ -11,7 +12,7 @@ const DeleteFlatButton = ({ id, setFlat }) => {
   return (
     <>
       <Button variant="contained" onClick={remove}>
-        Remove
+       <DeleteOutlineIcon/>
       </Button>
     </>
   );
