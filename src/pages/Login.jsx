@@ -24,11 +24,13 @@ const Login = () => {
 
     if (result.docs.length > 0) {
       const user = result.docs[0].data();
+      const user_id = result.docs[0].id;
       if (user.password === password.current.value) {
         setAlertSeverity("success");
         setAlertMessage("Login Success");
         setShowAlert(true);
         console.log("Redirect");
+        localStorage.setItem('user_logged', JSON.stringify(user_id));
       } else {
         setAlertSeverity("error");
         setAlertMessage("Incorrect Password");
