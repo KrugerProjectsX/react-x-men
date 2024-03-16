@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import UserRegister from "./pages/UserRegister";
 import AddFlat from "./pages/AddFlat";
 import Flats from "./pages/Flats";
+import MyFlats from "./pages/MyFlats";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/userregister" element={<UserRegister />} />
         <Route path="/addflat" element={<AddFlat />} />
         <Route path="/flats" element={<Flats />} />
+        <Route path="/myflats" element={<MyFlats />} />
       </Routes>
     </>
   );

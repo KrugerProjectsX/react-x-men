@@ -30,7 +30,9 @@ const FlatForm = () => {
       yearBuilt: yearBuilt.current.value,
       rentPrice: rentPrice.current.value,
       dateAvailable: dateAvailable.current.value,
-    };
+      user: JSON.parse(localStorage.getItem("user_logged"))
+    }
+
     await addDoc(ref, flat);
     navigate("/flats", { replace: false });
   };
