@@ -13,6 +13,7 @@ import {
 import ShowModal from "./ShowModal";
 import DeleteFlatButton from "./DeleteFlatButton";
 import { db } from "../firebase";
+import { useNavigate } from "react-router-dom";
 
 const FlatList = () => {
   const [flats, setFlats] = useState([]);
@@ -30,10 +31,19 @@ const FlatList = () => {
   useEffect(() => {
     getFlat();
   }, [flat]);
+  
+  const navigate= useNavigate();
+  const handleClick =()=> {
+    navigate ("/addflat")
+  }
+
 
   return (
     <div>
       <h1>Flats</h1>
+      <button onClick={handleClick}> Go to other page
+        Agregar Flat
+      </button>
 
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">

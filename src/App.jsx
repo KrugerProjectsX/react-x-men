@@ -17,6 +17,7 @@ function App() {
         <Route path="/addflat" element={<AddFlat />} />
         <Route path="/flats" element={<Flats />} />
         <Route path="/myflats" element={<MyFlats />} />
+        
       </Routes>
     </>
   );
