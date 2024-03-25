@@ -1,11 +1,18 @@
+import Header from "../components/Header";
+import UsersTable from "../components/UserTable";
+import checkUserLogged from "../services/actions";
+
 const Home = () => {
+
+  checkUserLogged();
+  
   return (
     <div>
-      <h1 className="text-3xl font-bold underline text-blue-500">
-        Hello world. <span className="text-red-500">REACT-X-MEN</span>
-      </h1>
+      <Header></Header>
+      <UsersTable></UsersTable>
     </div>
   );
 };
 
 export default Home;
+ 
