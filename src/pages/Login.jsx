@@ -23,7 +23,7 @@ const Login = () => {
     const result = await getDocs(search);
 
     if (result.docs.length > 0) {
-      const user = result.docs[0].data();
+      const user = result.docs[0].data(); 
       if (user.password === password.current.value) {
         setAlertSeverity("success");
         setAlertMessage("Login Success");
