@@ -1,10 +1,11 @@
-import React from 'react'
+
+import UserFormHook from '../components/UserFormHook'
 
 const RegisterUser = () => {
   return (
     <>
     <div>Profile</div>
-    <UserForm type={'create'}/>
+    <UserFormHook type={'create'}/>
   </>
   )
 }

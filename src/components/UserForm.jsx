@@ -7,6 +7,7 @@ import { db } from "../firebase";
 
 export default function UserForm({ type }) {
     const currentDate = new Date().toJSON().slice(0, 10);
+    
 
     const [user, setUser] = useState({
         firstName: '',

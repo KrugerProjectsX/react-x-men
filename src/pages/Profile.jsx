@@ -1,10 +1,11 @@
-import UserForm from "../components/UserForm";
+import UserFormHook from "../components/UserFormHook";
+
 
 const Profile = () => {
   return (
     <>
       <div>Profile</div>
-      <UserForm type={'update'}/>
+      <UserFormHook type={'create'}/>
     </>
   );
 };
