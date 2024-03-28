@@ -27,36 +27,57 @@ const Login = () => {
     const passwordValue = passwordRef.current.value;
 
     try {
-        const querySnapshot = await getDocs(query(usersRef, where("email", "==", emailValue)));
-        if (!querySnapshot.empty) {
-            const user = querySnapshot.docs[0].data();
-            const userId = querySnapshot.docs[0].id;
+      const querySnapshot = await getDocs(
+        query(usersRef, where("email", "==", emailValue))
+      );
 
-            if (user.password === passwordValue) {
-                console.log("Login success");
-                localStorage.setItem('user_logged', JSON.stringify(userId));
-                setIsProgress(false);
-                navigate('/dashboard', { replace: true });
-                return;
-            } else {
-                setErrorAlert("Contraseña incorrecta");
-            }
-        } else {
-            setErrorAlert("Usuario no encontrado");
-        }
+      // if (querySnapshot.empty) {
+      //   setErrorAlert("Usuario no encontrado");
+      //   return;
+      // }
+
+      // if (user.password !== passwordValue) {
+      //   setErrorAlert("Contraseña incorrecta");
+      //   return;
+      // }
+      // const userDoc = querySnapshot.docs[0];
+      // const user = userDoc.data();
+      // const userId = userDoc.id;
+      // console.log("Login success");
+      // localStorage.setItem("user_logged", JSON.stringify(userId));
+      // setIsProgress(false);
+      // navigate("/dashboard", { replace: true });
+      // return;
+      if (!querySnapshot.empty) {
+          const user = querySnapshot.docs[0].data();
+          const userId = querySnapshot.docs[0].id;
+
+          if (user.password === passwordValue) {
+              console.log("Login success");
+              localStorage.setItem('user_logged', JSON.stringify(userId));
+              setIsProgress(false);
+              navigate('/dashboard', { replace: true });
+              return;
+          } else {
+              setErrorAlert("Contraseña incorrecta");
+          }
+      } else {
+          setErrorAlert("Usuario no encontrado");
+      }
     } catch (error) {
-        console.error("Error al iniciar sesión:", error);
-        setErrorAlert("Ocurrió un error al iniciar sesión. Por favor, inténtelo de nuevo más tarde.");
+      console.error("Error al iniciar sesión:", error);
+      setErrorAlert(
+        "Ocurrió un error al iniciar sesión. Por favor, inténtelo de nuevo más tarde."
+      );
     }
 
     setIsProgress(false);
-}
+  };
 
 
   const handleAlertClose = () => {
     setShowAlert(false);
   };
-
 
 
   return (
