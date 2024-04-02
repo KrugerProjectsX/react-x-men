@@ -16,7 +16,7 @@ export const addUserToFirestore = createAsyncThunk(
 
 // fetch users
 export const fetchUsers = createAsyncThunk(
-  'users/fetchUsers',
+  'users/fetchUsers', 
   async () => {
     const querySnapshot = await getDocs(collection(db, 'users'));
     const users = querySnapshot.docs.map((doc)=>({
@@ -31,15 +31,17 @@ const UserSlice = createSlice({
     name: 'Users',
     initialState: {
         usersArray: [],
+        error: null,
+        isLoading: false,
     },
     extraReducers: (builder) => {
       builder
-      .addCase(fetchUsers.fulfilled, (state, action) => {
+      .addCase(fetchUsers.fulfilled, (state, action) => { 
         state.usersArray = action.payload;
       })
       .addCase(addUserToFirestore.fulfilled, (state, action)=>{
         state.usersArray.push(action.payload);
-      })
+      })    
     }});
     /** 
     extraReducers: (builder) => {

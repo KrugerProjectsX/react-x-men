@@ -2,11 +2,13 @@ import { Box, Button, TextField } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import {doc, updateDoc, getDoc, collection, addDoc} from "firebase/firestore";
 import { db } from "../firebase";
+import { useNavigate } from "react-router-dom";
 
 
 
-export default function UserForm({ type }) {
+export default function UserForm({ type, userId }) {
     const currentDate = new Date().toJSON().slice(0, 10);
+    const navigate= useNavigate();
     
 
     const [user, setUser] = useState({
@@ -25,9 +27,12 @@ export default function UserForm({ type }) {
     const id = JSON.parse(localStorage.getItem('user_logged'));
     const refCreate = collection(db, "users");
     let ref = null;
-    if (id){ 
-         ref = doc(db, "users", id);
-    }
+    if (userId == null && type !== 'create') {
+        userId = JSON.parse(localStorage.getItem('user_logged'));
+   }
+   if ( userId && type !== 'create'){
+       ref = doc(db, "users", userId);
+   }
     
     const today = new Date();
     const minBirthDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate()).toISOString().split('T')[0];
@@ -73,6 +78,7 @@ export default function UserForm({ type }) {
 
         if (type === 'update') {
             await updateDoc(ref, userSend);
+            navigate("/dashboard", { replace: true });
         }
     }
   
@@ -89,9 +95,11 @@ export default function UserForm({ type }) {
                         select
                         label="User Type"
                         variant="outlined"
+                        disabled={type === 'view'}
                         SelectProps={{ native: true }}
                         className="w-full mb-5"
                         inputRef={userTypeRef}
+                        defaultValue={user.role}
                     >
                         <option key="landlord" value="landlord">landlord</option>
                         <option key="renter" value="renter">renter</option>

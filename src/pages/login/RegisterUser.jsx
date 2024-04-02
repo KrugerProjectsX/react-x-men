@@ -1,5 +1,5 @@
 
-import UserFormHook from '../components/UserFormHook'
+import UserFormHook from '../../components/UserFormHook'
 
 const RegisterUser = () => {
   return (

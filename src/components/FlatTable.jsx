@@ -13,20 +13,47 @@ import {
 import ShowModal from "./ShowModal";
 import DeleteFlatButton from "./DeleteFlatButton";
 import { db } from "../firebase";
+import { useNavigate } from "react-router-dom";
+import * as React from 'react';
+
 
 const FlatTable = ({type}) => {
 
     const ref= collection(db, "flats");
+    const refFav = collection(db, "favorites");
     const userId= JSON.parse(localStorage.getItem("user_logged"));
-
+    const navigate= useNavigate();
+    const [open, setOpen] = useState(false);
      const getData= async()=>{
      
         if (type=== "all-flats"){
-
+          const data = await getDocs(ref);
+          const allFlats = [];
+          for(const item of data.docs){
+              
+              const search = query(refFav, where("userId", "==",userId ), where('flatId','==',item.id));
+              const dataFav = await getDocs(search);
+              let favorite =false;
+              if(dataFav.docs.length > 0){
+                  favorite = dataFav.docs[0].id;
+              }
+              const flatsWithFav = {...item.data(), id: item.id, favorite: favorite};
+              allFlats.push(flatsWithFav)
+          }
+          setFlats(allFlats);
 
         }
         if (type=== "favorite-flats"){
+          const search = query(refFav, where("userId", "==",userId ) );
+          const data = await getDocs(search);
+          const allFlats = [];
+          for (const item of data.docs){
+              const refFlat = doc(db, "flats", item.data().flatId);
+              const dataFlat = await getDoc(refFlat);
+              allFlats.push({...dataFlat.data(), id: dataFlat.id, favorite: item.id});
+          }
 
+          setFlats(allFlats);
 
         }
         if (type=== "my-flats"){
@@ -40,7 +67,10 @@ const FlatTable = ({type}) => {
         }
      }
 
-     console.log(rows);
+     const handleClick =()=> {
+      navigate ("/addflat")
+    }
+
     useEffect(()=>{
         getData();
     },[])
@@ -61,9 +91,16 @@ const FlatTable = ({type}) => {
     getFlat();
   }, [flat]);
 
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   return (
     <div>
+   
       <h1>Flats</h1>
+      <button onClick={handleClick}> 
+        Agregar Piso
+      </button>
 
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -95,7 +132,13 @@ const FlatTable = ({type}) => {
                 <TableCell align="right">{row.dateAvailable}</TableCell>
 
                 <TableCell align="right">
-                  <ShowModal id={row.id} setFlat={setFlat} />
+                  
+                  <ShowModal
+                    onClose={handleClose}
+                    title="Modal Title"
+                    id={row.id}
+                    setFlat={setFlat}
+                  />
                 </TableCell>
                 <TableCell align="right">
                   <DeleteFlatButton

@@ -14,37 +14,75 @@ import ShowModal from "./ShowModal";
 import DeleteFlatButton from "./DeleteFlatButton";
 import { db } from "../firebase";
 import { useNavigate } from "react-router-dom";
-
+import Alert from "@mui/material/Alert";
+import CheckIcon from "@mui/icons-material/Check";
+import { useLocation } from "react-router-dom";
+import AlertMessage from "./AlertMessage";
 const FlatList = () => {
+  const location = useLocation();
+  const [param, setParam] = useState(location.state && location.state.param);
   const [flats, setFlats] = useState([]);
   const [flat, setFlat] = useState(false);
   const flatsCollectionRef = collection(db, "flats");
+  const [showAlert, setShowAlert] = useState(false);
+  const [open, setOpen] = useState(false);
 
+  const showAlertForParamC = (oldParam) => {
+    if (oldParam && (oldParam === "C"||oldParam === "E") ) {
+      setShowAlert(true);
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 10000);
+ 
+    }
+  };
+  
   const getFlat = async () => {
     const data = await getDocs(flatsCollectionRef);
     const userData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-
-    console.log(userData);
+    showAlertForParamC(param);
     setFlats(userData);
   };
+  useEffect(() => {
+    if (param && (param === "C" || param === "E")) {
+      setShowAlert(true);
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 10000);
+    }
+  }, [param]);
+  
+  useEffect(() => {
+    console.log("Actualiza ",showAlert); // Muestra el valor actualizado de showAlert
+  }, [showAlert]);
+
 
   useEffect(() => {
     getFlat();
   }, [flat]);
-  
-  const navigate= useNavigate();
-  const handleClick =()=> {
-    navigate ("/addflat")
-  }
 
+  const handleClose = (newParam) => {
+    setOpen(false);
+    setParam(newParam); // Actualiza param con el nuevo valor
+    showAlertForParamC(newParam);
+  };
+
+ 
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate("/addflat");
+  };
 
   return (
     <div>
       <h1>Flats</h1>
-      <button onClick={handleClick}> Go to other page
-        Agregar Flat
-      </button>
-
+      <button onClick={handleClick}>Agregar Piso</button>
+      {showAlert && param === "E" && (
+        <AlertMessage message={"Pisos"} type={"success"} accion={"editado"} />
+      )}
+      {showAlert && param === "C" && (
+        <AlertMessage message={"Pisos"} type={"success"} accion={"agregado"} />
+      )}
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -75,14 +113,18 @@ const FlatList = () => {
                 <TableCell align="right">{row.dateAvailable}</TableCell>
 
                 <TableCell align="right">
-                  <ShowModal id={row.id} setFlat={setFlat} />
+                  <ShowModal
+                    onClose={handleClose}
+                    title="Modal Title"
+                    id={row.id}
+                    setFlat={setFlat}
+                  />
                 </TableCell>
                 <TableCell align="right">
                   <DeleteFlatButton
                     id={row.id}
                     setFlat={setFlat}
-                  >
-                   </DeleteFlatButton>
+                  ></DeleteFlatButton>
                 </TableCell>
               </TableRow>
             ))}

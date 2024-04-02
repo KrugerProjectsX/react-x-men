@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import MenuTransitions from "./MenuTransitions";
 import { getUserLogged } from '../services/users.js';
+import { Link } from 'react-router-dom';
 
 
 export default function Header() {
@@ -33,10 +34,11 @@ export default function Header() {
                     <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
                     </Typography>
                     <div className={'flex items-center justify-center mr-2'}>
-                        <Button className={'text-secondary'}>Home</Button>
-                        {user && (user.role === 'landlord' || user.role === 'admin' ) && <Button className={'text-secondary'}>My Flats</Button>}
-                        <Button className={'text-secondary'}>Favourites</Button>
-                        { user && user.role ==='admin' && <Button className={'text-secondary'}>Users</Button>}
+                        <Button className={'text-secondary'} component={Link} to="/dashboard"  >Home</Button>
+                        {user && (user.role === 'landlord' || user.role === 'admin' ) && <Button component={Link} to="/myflats" className={'text-secondary'}>My Flats</Button>}
+                        <Button className={'text-secondary'} component={Link} to="/flats">Pisos</Button>
+                        <Button className={'text-secondary'}>Favoritos</Button>
+                        { user && user.role ==='admin' && <Button className={'text-secondary'} component={Link} to="/users">Usuarios</Button>}
                     </div>
                     <MenuTransitions user={user} setUser={setUser}/>
                 </Toolbar>

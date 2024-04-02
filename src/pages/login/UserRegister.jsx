@@ -44,7 +44,7 @@ const UserRegister = () => {
   };
 
   const isValidPassword = (password) => {
-    // Password must contain letters, numbers, and a special character
+    
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{6,}$/;
     return passwordRegex.test(password);
   };

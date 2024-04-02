@@ -21,7 +21,7 @@ const style = {
   p: 4,
 };
 
-function ShowModal({ id, setFlat }) {
+function ShowModal({onClose, title,id, setFlat }) {
   const currentDate = new Date().toJSON().slice(0, 10);
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
@@ -58,8 +58,9 @@ function ShowModal({ id, setFlat }) {
     await getFlats();
     setOpen(true);
   };
- 
-  console.log("flat"+ flat)
+
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     await updateDoc(refDoc, {
@@ -75,20 +76,26 @@ function ShowModal({ id, setFlat }) {
     setFlat((prev) => !prev);
   };
 
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    const param = "E";
+    setOpen(false);
+    onClose(param);
+
+  };  
+  
 
   return (
     <div>
       <Button onClick={handleOpen}><ModeEditOutlineIcon/></Button>
       <Modal
         open={open}
-        onClose={handleClose}
+        onClose={onClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
           <form className="title" onSubmit={handleSubmit}>
-            <h2 className="title">Update Flat info</h2>
+            <h2 className="title">Editar Información del Piso</h2>
             <TextField
           label="City"
           inputRef={city}

@@ -1,116 +1,115 @@
-import { useRef } from "react";
+import { Box, Button, Switch, TextField } from "@mui/material";
+import {doc, updateDoc, getDoc, collection, addDoc} from "firebase/firestore";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { db } from "../firebase";
-import { addDoc, collection } from "firebase/firestore";
-import { Box, Button, Switch, TextField } from "@mui/material";
 
 const FlatForm = () => {
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const currentDate = new Date().toJSON().slice(0, 10);
   const navigate = useNavigate();
-
-  const city = useRef("");
-  const streetName = useRef("");
-  const streetNumber = useRef(0);
-  const areaSize = useRef(0);
-  const hasAc = useRef(false);
-  const yearBuilt = useRef(0);
-  const rentPrice = useRef(0);
-  const dateAvailable = useRef("");
   const ref = collection(db, "flats");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const onSubmit = async (data) => {
     const flat = {
-      city: city.current.value,
-      streetName: streetName.current.value,
-      streetNumber: streetNumber.current.value,
-      areaSize: areaSize.current.value,
-      hasAc: hasAc.current.checked,
-      yearBuilt: yearBuilt.current.value,
-      rentPrice: rentPrice.current.value,
-      dateAvailable: dateAvailable.current.value,
+      city: data.city,
+      streetName: data.streetName,
+      streetNumber: data.streetNumber,
+      areaSize: data.areaSize,
+      hasAc: data.hasAc,
+      yearBuilt: data.yearBuilt,
+      rentPrice: data.rentPrice,
+      dateAvailable: data.dateAvailable,
       user: JSON.parse(localStorage.getItem("user_logged"))
     }
 
     await addDoc(ref, flat);
-    navigate("/flats", { replace: false });
+    let param = 'C';
+    navigate(`/flats`, { replace: false, state: { param } });
   };
 
   return (
     <div>
-      {" "}
       <Box
         component="form"
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         className="max-w-sm mx-auto mt-8 p-6 bg-white rounded-lg shadow-md"
       >
         <TextField
           label="City"
-          inputRef={city}
+          {...register("city", { required: true })}
           variant="outlined"
           fullWidth
           className="mb-4"
         />
+        {errors.city && <p>Este campo es requerido.</p>}
         <TextField
           label="Street name"
-          inputRef={streetName}
+          {...register("streetName", { required: true })}
           variant="outlined"
           fullWidth
           className="mb-4"
         />
+        {errors.streetName && <p>Este campo es requerido.</p>}
         <TextField
           label="Street number"
-          inputRef={streetNumber}
+          {...register("streetNumber", { required: true })}
           variant="outlined"
           fullWidth
           className="mb-4"
         />
+         {errors.streetNumber && <p>Este campo es requerido.</p>}
         <TextField
           label="Area size"
           type="number"
-          inputRef={areaSize}
+          {...register("areaSize", { required: true })}
           variant="outlined"
           fullWidth
           className="mb-4"
         />
+        {errors.areaSize && <p>Este campo es requerido.</p>}
         <Box className="flex items-center mb-4">
-          <Switch inputRef={hasAc} color="primary" />
+          <Switch {...register("hasAc",  )} color="primary" />
           <label>Has AC</label>
         </Box>
         <TextField
           label="Year built"
           type={"number"}
           inputProps={{ min: 1900, max: 2050 }}
-          inputRef={yearBuilt}
+          {...register("yearBuilt", { required: true })}
           variant="outlined"
           fullWidth
           className="mb-4"
         />
+         {errors.yearBuilt && <p>Este campo es requerido.</p>}
         <TextField
           label="Rent price"
           type={"number"}
-          inputRef={rentPrice}
+          {...register("rentPrice", { required: true })}
           variant="outlined"
           fullWidth
           className="mb-4"
         />
+         {errors.rentPrice && <p>Este campo es requerido.</p>}
         <TextField
           label="Date Available"
           type={"date"}
           defaultValue={currentDate}
-          inputRef={dateAvailable}
+          {...register("dateAvailable", { required: true })}
           variant="outlined"
           fullWidth
           className="mb-4"
         />
+         {errors.dateAvailable && <p>Este campo es requerido.</p>}
+       
         <Button
           type="submit"
           className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
-          Add Flat
+          Agregar Piso
         </Button>
       </Box>
+      
     </div>
   );
 };
