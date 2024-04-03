@@ -1,122 +1,93 @@
-import * as React from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+
 import { useEffect, useState } from "react";
-import {getDocs, query, where, collection, addDoc, doc, deleteDoc, getDoc} from "firebase/firestore";
-import { db } from "../firebase";
-import {Button} from "@mui/material";
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
+import ShowModal from "./ShowModal";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
+import { useDispatch, useSelector } from "react-redux";
+import { deleteFlat, fetchFlats } from "../redux/states/FlatSlice";
+import { useNavigate } from "react-router-dom";
 
-// @Params: type: "my-flats" | "all-flats" | "favorite-flats"
-export default function FlatsTable({ type }) {
-    const ref = collection(db, "flats");
-    const refFav = collection(db, "favorites");
+const FlatTable = ({type}) => {
 
-    const userId = JSON.parse(localStorage.getItem('user_logged'));
-    const [flats, setFlats] = useState([]);
-    const [flag, setFlag ] = useState(false);
+  const data = useSelector((state)=>state.flats.flatsArray);
 
-    const getData = async () => {
-        if (type === 'my-flats') {
-            const search = query(ref, where("user", "==", userId));
-            const data = await getDocs(search);
-            const rows = data.docs.map((item) => {
-                return { ...item.data(), id: item.id }
-            });
+  const dispatch = useDispatch();
 
-            setFlats(rows);
-        }
-        if (type === 'all-flats') {
-            const data = await getDocs(ref);
-            const allFlats = [];
-            for(const item of data.docs){
+  useEffect(()=>{
+    dispatch(fetchFlats());
+  },[dispatch])
+
+  const handleDelete=(id)=>{
+    dispatch(deleteFlat(id));
+  }
+
+  const navigate= useNavigate();
+  const handleClick =()=> {
+    navigate ("/addflat")
+  }
+
+  return (
+    <div>
+      <h1>Flats</h1>
+ 
+      <button onClick={handleClick}> 
+        Agregar Flat
+      </button>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell align="right">Ciudad</TableCell>
+              <TableCell align="right">Nombre de Calle</TableCell>
+              <TableCell align="right">Número de Calle</TableCell>
+              <TableCell align="right">Área(m2)</TableCell>
+              <TableCell align="right">has AC</TableCell>
+              <TableCell align="right">Año de construcción</TableCell>
+              <TableCell align="right">Precio de Renta</TableCell>
+              <TableCell align="right">Date Available</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.map((row) => (
+              <TableRow
+                key={row.id}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell align="right">{row.flat.city}</TableCell>
+                <TableCell align="right">{row.flat.streetName}</TableCell>
+                <TableCell align="right">{row.flat.streetNumber}</TableCell>
+                <TableCell align="right">{row.flat.areaSize}</TableCell>
+                <TableCell align="right">{row.flat.hasAc ? "Si" : "No"}</TableCell>
+                <TableCell align="right">{row.flat.yearBuilt}</TableCell>
+                <TableCell align="right">{row.flat.rentPrice}</TableCell>
+                <TableCell align="right">{row.flat.dateAvailable}</TableCell>
+                <TableCell align="right">
+                  <ShowModal idFlat={row.id}/>
+                </TableCell>
+                <TableCell align="right">
+                <span className='icon red'
+                        onClick={()=>handleDelete(row.id)}>
+                          <DeleteOutlineIcon/>
+                        
+                      </span>
+                </TableCell>
                 
-                const search = query(refFav, where("userId", "==",userId ), where('flatId','==',item.id));
-                const dataFav = await getDocs(search);
-                let favorite =false;
-                if(dataFav.docs.length > 0){
-                    favorite = dataFav.docs[0].id;
-                }
-                const flatsWithFav = {...item.data(), id: item.id, favorite: favorite};
-                allFlats.push(flatsWithFav)
-            }
-            setFlats(allFlats);
-        }
-        
-        if (type === 'favorite-flats') {
-            const search = query(refFav, where("userId", "==",userId ) );
-            const data = await getDocs(search);
-            const allFlats = [];
-            for (const item of data.docs){
-                const refFlat = doc(db, "flats", item.data().flatId);
-                const dataFlat = await getDoc(refFlat);
-                allFlats.push({...dataFlat.data(), id: dataFlat.id, favorite: item.id});
-            }
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
+  );
+};
 
-            setFlats(allFlats);
-            
-        }
-        
-        
-    }
-    
-    const addFavorite = async (id) => {
-        //TODO:  verificar si ya existe esta relacion entre el flat id y userId
-        const data = {userId: userId, flatId:id}
-        await addDoc(refFav, data);
-        setFlag(!flag);
-    }
-    const removeFavorite = async (id) => {
-        
-        const refRemoveFav = doc(db,"favorites",id)
-        await deleteDoc(refRemoveFav);
-        setFlag(!flag);
-        
-    }
-
-    useEffect(() => {
-        getData();
-    }, [flats]);
-
-    return (
-        <TableContainer>
-            <Table className="min-w-full divide-y divide-gray-200" aria-label="simple table">
-                <TableHead className="bg-gray-50">
-                    <TableRow>
-                        <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">City</TableCell>
-                        <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">Area size</TableCell>
-                        <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">Rent price</TableCell>
-                        <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">Has AC</TableCell>
-                        <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">Date available</TableCell>
-                        {(type === 'all-flats'|| type=== 'favorite-flats') && <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right"></TableCell>}
-                        <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right"></TableCell>
-
-                    </TableRow>
-                </TableHead>
-                <TableBody className="bg-white divide-y divide-gray-200">
-                    {flats.map((row) => (
-                        <TableRow key={row.id}>
-                            <TableCell className="px-6 py-4 whitespace-nowrap">{row.city}</TableCell>
-                            <TableCell className="px-6 py-4 whitespace-nowrap" >{row.areaSize}</TableCell>
-                            <TableCell className="px-6 py-4 whitespace-nowrap" >{row.rentPrice}</TableCell>
-                            <TableCell className="px-6 py-4 whitespace-nowrap" >{row.hasAc ? 'Yes' : 'No'}</TableCell>
-                            <TableCell className="px-6 py-4 whitespace-nowrap" >{row.dateAvailable}</TableCell>
-                            {(type === 'all-flats'|| type=== 'favorite-flats') && <TableCell className="px-6 py-4 whitespace-nowrap" >
-                                {!row.favorite && <Button onClick={()=>addFavorite(row.id)}>Add Favorite</Button>}
-                                {row.favorite && <Button onClick={()=>removeFavorite(row.favorite)}>Remove Favorite</Button>}
-                            </TableCell> }
-                            <TableCell className="px-6 py-4 whitespace-nowrap">
-                                <Button href={`/flat/${row.id}`} >View</Button>
-                                {type === 'my-flats' && <Button href={`/flats/edit/${row.id}`} >Edit</Button>}
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    );
-}
+export default FlatTable;

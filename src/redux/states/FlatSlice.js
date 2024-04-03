@@ -32,7 +32,7 @@ export const fetchFlats = createAsyncThunk(
       'flats/deleteFlat',
       async(id)=>{
         const flats = await getDocs(collection(db,'flats'));
-        for(var  snap of flats.docs){
+        for(let snap of flats.docs){
           if(snap.id === id){
             await deleteDoc(doc(db,'flats',snap.id));
           }
@@ -61,8 +61,6 @@ export const updateFlat=createAsyncThunk(
     name: 'Flats',
     initialState: {
         flatsArray: [],
-        error: null,
-        isLoading: false,
     },
     extraReducers: (builder) => {
       builder

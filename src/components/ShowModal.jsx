@@ -7,6 +7,8 @@ import Modal from "@mui/material/Modal";
 import ModeEditOutlineIcon from '@mui/icons-material/ModeEditOutline';
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import { useDispatch } from "react-redux";
+import { updateFlat } from "../redux/states/FlatSlice";
 
 const style = {
   position: "absolute",
@@ -21,11 +23,11 @@ const style = {
   p: 4,
 };
 
-function ShowModal({onClose, title,id, setFlat }) {
+function ShowModal({title,idFlat, setFlat }) {
   const currentDate = new Date().toJSON().slice(0, 10);
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
-
-  const refDoc = doc(db, "flats", id);
+  const dispatch = useDispatch();
+  const refDoc = doc(db, "flats", idFlat);
 
   const [open, setOpen] = useState(false);
 
@@ -63,7 +65,7 @@ function ShowModal({onClose, title,id, setFlat }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await updateDoc(refDoc, {
+   let flat= {
       city: city.current.value,
       streetName: streetName.current.value,
       streetNumber: streetNumber.current.value,
@@ -71,15 +73,16 @@ function ShowModal({onClose, title,id, setFlat }) {
       hasAc: hasAc.current.checked,
       yearBuilt: yearBuilt.current.value,
       rentPrice: rentPrice.current.value,
-      dateAvailable: dateAvailable.current.value,    });
+      dateAvailable: dateAvailable.current.value,    }
+    dispatch(updateFlat({id:idFlat, flat}))
     handleClose();
-    setFlat((prev) => !prev);
   };
 
   const handleClose = () => {
+
     const param = "E";
     setOpen(false);
-    onClose(param);
+  
 
   };  
   
@@ -89,7 +92,7 @@ function ShowModal({onClose, title,id, setFlat }) {
       <Button onClick={handleOpen}><ModeEditOutlineIcon/></Button>
       <Modal
         open={open}
-        onClose={onClose}
+       
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >

@@ -1,14 +1,15 @@
 import { Box, Button, Switch, TextField } from "@mui/material";
-import {doc, updateDoc, getDoc, collection, addDoc} from "firebase/firestore";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { db } from "../firebase";
+import { useDispatch } from "react-redux";
+import { addFlatToFirestore } from "../redux/states/FlatSlice";
 
 const FlatForm = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const currentDate = new Date().toJSON().slice(0, 10);
   const navigate = useNavigate();
-  const ref = collection(db, "flats");
+ 
+  const dispatch = useDispatch();
 
   const onSubmit = async (data) => {
     const flat = {
@@ -23,9 +24,9 @@ const FlatForm = () => {
       user: JSON.parse(localStorage.getItem("user_logged"))
     }
 
-    await addDoc(ref, flat);
+    dispatch(addFlatToFirestore(flat));
     let param = 'C';
-    navigate(`/flats`, { replace: false, state: { param } });
+    navigate(`/dashboard`, { replace: false, state: { param } });
   };
 
   return (

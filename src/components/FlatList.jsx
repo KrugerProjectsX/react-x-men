@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@mui/material";
 import ShowModal from "./ShowModal";
-import DeleteFlatButton from "./DeleteFlatButton";
+
 import { db } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import Alert from "@mui/material/Alert";
@@ -120,12 +120,7 @@ const FlatList = () => {
                     setFlat={setFlat}
                   />
                 </TableCell>
-                <TableCell align="right">
-                  <DeleteFlatButton
-                    id={row.id}
-                    setFlat={setFlat}
-                  ></DeleteFlatButton>
-                </TableCell>
+                
               </TableRow>
             ))}
           </TableBody>
