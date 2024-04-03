@@ -10,7 +10,7 @@ const Home = () => {
   return (
     <div>
       <Header></Header>
-      <FlatTable></FlatTable>
+      <FlatTable type={'all-flats'}></FlatTable>
     </div>
   );
 };

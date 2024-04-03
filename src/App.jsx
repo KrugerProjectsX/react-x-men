@@ -15,6 +15,7 @@ import UserRegister from "./pages/login/UserRegister";
 import AddFlats from "./pages/flat/AddFlats";
 import Flat from "./pages/flat/Flat";
 import ProfileUpdate from "./pages/user/ProfileUpdate";
+import FlatsFavorites from "./pages/flat/FlatsFavorites";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="/myflats" element={<MyFlats />} />
         <Route path="/addflat" element={<AddFlats />} />
         <Route path={"/flat/:id"} element={<Flat />} />
+        <Route path={"/my-favorites-flats"} element={<FlatsFavorites/>}/>
       </Routes>
     </>
   );
