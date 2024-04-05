@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { db } from "../../firebase";
 
@@ -14,7 +14,23 @@ export const addFlatToFirestore = createAsyncThunk(
     }
 );
 
-// fetch users
+
+export const myFlats = createAsyncThunk(
+  'flats/myFlats',
+  async (user) => {
+    const search = query(collection(db, "flats"), where("user", "==", user));
+    const data = await getDocs(search);
+    const flats = data.docs.map((doc) => ({
+      id: doc.id,
+      flat: doc.data(),
+    }));
+    console.log("Mapped flats:", flats);
+    
+    return flats;
+  }
+);
+
+// fetch flats
 export const fetchFlats = createAsyncThunk(
     'flats/fetchFlats',
     async () => {
@@ -39,7 +55,7 @@ export const fetchFlats = createAsyncThunk(
         }
         return id;
       }
-    );
+    ); 
 
     // update flat
 export const updateFlat=createAsyncThunk(
@@ -61,9 +77,13 @@ export const updateFlat=createAsyncThunk(
     name: 'Flats',
     initialState: {
         flatsArray: [],
+        myFlatsArray: [],
     },
     extraReducers: (builder) => {
       builder
+      .addCase(myFlats.fulfilled, (state, action) => { 
+        state.flatsArray = action.payload;
+      })
       .addCase(fetchFlats.fulfilled, (state, action) => { 
         state.flatsArray = action.payload;
       })

@@ -1,4 +1,4 @@
-import FlatList from "../../components/FlatList";
+import FlatTable from "../../components/FlatTable";
 import Header from "../../components/Header";
 
 
@@ -6,7 +6,7 @@ const Flats = () => {
   return (
     <div>
       <Header></Header>
-      <FlatList></FlatList>
+      <FlatTable type={'all-flats'}></FlatTable>
     </div>
   );
 };

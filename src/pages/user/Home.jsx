@@ -10,7 +10,7 @@ const Home = () => {
   return (
     <div>
       <Header></Header>
-      <FlatTable type={'all-flats'}></FlatTable>
+      <FlatTable type={'favorites-flats'}></FlatTable>
     </div>
   );
 };

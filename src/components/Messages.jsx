@@ -36,11 +36,11 @@ const Messages = () => {
         setFlat(responseFlat)
     }
     
-    useEffect(
-        () => {
-            getFlat();
-        }, []
-    )
+    // useEffect(
+    //     () => {
+    //         getFlat();
+    //     }, []
+    // )
     
     const handleSubmit = async (e) => {
         e.preventDefault();

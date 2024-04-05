@@ -13,19 +13,37 @@ import ShowModal from "./ShowModal";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 import { useDispatch, useSelector } from "react-redux";
-import { deleteFlat, fetchFlats } from "../redux/states/FlatSlice";
-import { useNavigate } from "react-router-dom";
+import { deleteFlat, fetchFlats, myFlats } from "../redux/states/FlatSlice";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const FlatTable = ({type}) => {
-
+  const user= JSON.parse(localStorage.getItem("user_logged"))
   const data = useSelector((state)=>state.flats.flatsArray);
+  const myData = useSelector((state)=>state.flats.myFlatsArray);
+  const [showAlert, setShowAlert] = useState(false);
 
   const dispatch = useDispatch();
-
+let location= useLocation();
+  console.log(location.pathname)
+  if (type === 'all-flats') {
   useEffect(()=>{
     dispatch(fetchFlats());
   },[dispatch])
+  }
 
+  if (type === 'favorites-flats') {
+    useEffect(()=>{
+      dispatch(fetchFlats());
+    },[dispatch])
+    }
+
+    if (type === 'my-flats' ) {
+      useEffect(()=>{
+        dispatch(myFlats(user));
+      },[dispatch])
+      }
+
+  
   const handleDelete=(id)=>{
     dispatch(deleteFlat(id));
   }

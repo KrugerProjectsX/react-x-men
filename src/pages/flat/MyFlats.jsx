@@ -7,7 +7,7 @@ export default function MyFlats() {
     <>
     
     <Header></Header>
-    <FlatTable></FlatTable>
+    <FlatTable type={'my-flats'}></FlatTable>
 
     </>
     

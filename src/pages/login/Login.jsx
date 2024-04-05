@@ -51,7 +51,7 @@ const Login = () => {
       }
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
-   
+      setErrorAlert("Usuario o Contraseña incorrecta.");
     }
     setIsProgress(false);
   };
@@ -109,13 +109,21 @@ const Login = () => {
         >
           {isProgress ? "Iniciando sesión..." : "Iniciar sesión"}
         </Button>
+        <div className="flex justify-center mt-3">
+          <span className=" text-center">
+            Aún no te has registrado{" "}
+            <a href="/register" className="text-blue-500 hover:underline">
+              Registrarse
+            </a>
+          </span>
+        </div>
         {errorAlert !== "" && (
           <Alert
             className="mt-3"
             severity="error"
             sx={{ display: errorAlert ? "block" : "none" }}
           >
-          <AlertTitle>Error</AlertTitle>
+            <AlertTitle>Error</AlertTitle>
             {errorAlert}
           </Alert>
         )}

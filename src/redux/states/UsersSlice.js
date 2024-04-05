@@ -1,16 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc, where } from "firebase/firestore";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { db } from "../../firebase";
 
-// add user to firestore
+// add user 
 export const addUserToFirestore = createAsyncThunk(
     'users/addUserToFirestore',
-    async (user)=>{
+    async (user, )=>{
+
+    
         const addUserRef = await addDoc(collection(db,'users'),user);
         const newUser = { id: addUserRef.id, user };
         return newUser;
+    
     }
 );
 
@@ -27,12 +30,40 @@ export const fetchUsers = createAsyncThunk(
   }
 );
 
+ // update user
+ export const updateUser=createAsyncThunk(
+  'user/updateUsers',
+  async(editedUser)=>{
+    const users = await getDocs(collection(db,'users'));
+    for(let snap of users.docs){
+      if(snap.id === editedUser.id){
+        const usersRef = doc(db,'users', snap.id);
+        await updateDoc(usersRef, editedUser.user);
+      }
+    }
+    return editedUser;
+  }
+);
+
+    // delete flat
+    export const deleteUser = createAsyncThunk(
+      'users/deleteUser',
+      async(id)=>{
+        const users = await getDocs(collection(db,'users'));
+        for(let snap of users.docs){
+          if(snap.id === id){
+            await deleteDoc(doc(db,'users',snap.id));
+          }
+        }
+        return id;
+      }
+    );
+
 const UserSlice = createSlice({
     name: 'Users',
     initialState: {
         usersArray: [],
-        error: null,
-        isLoading: false,
+      
     },
     extraReducers: (builder) => {
       builder
@@ -42,29 +73,17 @@ const UserSlice = createSlice({
       .addCase(addUserToFirestore.fulfilled, (state, action)=>{
         state.usersArray.push(action.payload);
       })    
+      .addCase(deleteUser.fulfilled,(state,action)=>{        
+        state.usersArray = state.usersArray.filter((user)=>user.id !== action.payload);
+      })
+      .addCase(updateUser.fulfilled,(state,action)=>{
+        const {id, flat} = action.payload;
+        const userIndex = state.usersArray.findIndex((user)=>user.id === id);
+        if(userIndex !== -1){
+          state.usersArray[userIndex] = {id: id, user}
+        }
+      })
     }});
-    /** 
-    extraReducers: (builder) => {
-        builder
-          .addCase(fetchBooks.fulfilled, (state, action) => {
-            state.booksArray = action.payload;
-          })
-          .addCase(addUserToFirestore.fulfilled, (state, action)=>{
-            state.booksArray.push(action.payload);
-          })
-          .addCase(deleteBook.fulfilled,(state,action)=>{
-            state.booksArray = state.booksArray.filter((book)=>book.id !== action.payload);
-          })
-          .addCase(deleteAllBooks.fulfilled,(state,action)=>{
-            state.booksArray = action.payload;
-          })
-          .addCase(updateBook.fulfilled,(state,action)=>{
-            const {id, book} = action.payload;
-            const bookIndex = state.booksArray.findIndex((book)=>book.id === id);
-            if(bookIndex !== -1){
-              state.booksArray[bookIndex] = {id: id, book}
-            }
-          })
-      }*/
+  
 
 export default UserSlice.reducer;
