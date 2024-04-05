@@ -1,15 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { db } from "../../firebase";
 
 // add user 
 export const addUserToFirestore = createAsyncThunk(
     'users/addUserToFirestore',
-    async (user, )=>{
+    async (user )=>{
 
-    
+      const querySnapshot = await getDocs(query(collection(db, 'users'), where('email', '==', user.email)));
+        if (!querySnapshot.empty) {
+            throw new Error('El correo electrónico ya está en uso');
+        }
         const addUserRef = await addDoc(collection(db,'users'),user);
         const newUser = { id: addUserRef.id, user };
         return newUser;
@@ -17,6 +20,18 @@ export const addUserToFirestore = createAsyncThunk(
     }
 );
 
+export  function getUserId() {
+  return JSON.parse(localStorage.getItem('user_logged')) || false;
+}
+export async function getUserLogged() {
+  const userId = getUserId();
+  if (userId) {
+      const ref = doc(db, "users", userId);
+      const dataUser = await getDoc(ref);
+      return  {...dataUser.data()};
+
+  }
+}
 // fetch users
 export const fetchUsers = createAsyncThunk(
   'users/fetchUsers', 

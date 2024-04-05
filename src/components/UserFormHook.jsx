@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function UserFormHook({ type }) {
     const currentDate = new Date().toJSON().slice(0, 10);
-   
+    const navigate= useNavigate();
     const { handleSubmit, register, setValue, formState: { errors } } = useForm({
         defaultValues: {
             firstName: '',
@@ -32,7 +32,7 @@ export default function UserFormHook({ type }) {
         if (type === 'create') {
             try {
                  await dispatch(addUserToFirestore({ ...data, birthDate: formattedDate }));
-                
+                 navigate("/", { replace: true });
                 } catch (error) {
                     setErrorMessage(error.message);
                 }

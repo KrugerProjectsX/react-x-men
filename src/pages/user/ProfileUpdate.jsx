@@ -1,13 +1,14 @@
-import UserForm from "../../components/UserForm"
+import Header from "../../components/Header";
+import UserForm from "../../components/UserForm";
 
 const ProfileUpdate = () => {
   return (
     <>
-            <h1>PROFILE update</h1>
-            <UserForm type={'update'}></UserForm>
+      <Header></Header>
+      <h1>PROFILE update</h1>
+      <UserForm type={"update"}></UserForm>
+    </>
+  );
+};
 
-        </>
-  )
-}
-
-export default ProfileUpdate
+export default ProfileUpdate;
