@@ -1,11 +1,13 @@
 import FlatTable from "../../components/FlatTable";
+import Header from "../../components/Header";
 
 const FlatsFavorites = () => {
   return (
     <>
     <div>
+      <Header></Header>
             <h1>FlatsFavorites</h1>
-            <FlatTable type={'favorite-flats'}/>
+            <FlatTable type={'favorites-flats'}/>
         </div>
     </>
 

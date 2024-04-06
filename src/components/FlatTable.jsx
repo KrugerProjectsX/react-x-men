@@ -14,7 +14,7 @@ import ShowModal from "./ShowModal";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 import { useDispatch, useSelector } from "react-redux";
-import { FavoriteFlat, deleteFlat, fetchFlats, myFlats } from "../redux/states/FlatSlice";
+import { deleteFlat, favoriteFlat, fetchFlats, myFlats } from "../redux/states/FlatSlice";
 import {  useNavigate } from "react-router-dom";
 
 const FlatTable = ({type}) => {
@@ -34,7 +34,7 @@ const FlatTable = ({type}) => {
 
   if (type === 'favorites-flats') {
     useEffect(()=>{
-      dispatch(FavoriteFlat(user));
+      dispatch(favoriteFlat(user));
     },[dispatch])
     }
 
@@ -104,7 +104,7 @@ const removeFavorite = async (id) => {
                 <TableCell align="right">{row.areaSize}</TableCell>
                 <TableCell align="right">{row.hasAc ? "Si" : "No"}</TableCell>
                 <TableCell align="right">{row.yearBuilt}</TableCell>
-                <TableCell align="right">{row.rentPrice}</TableCell>
+                <TableCell align="right">$ {row.rentPrice}</TableCell>
                 <TableCell align="right">{row.dateAvailable}</TableCell>
                 <TableCell align="right">
                   <ShowModal idFlat={row.id}/>

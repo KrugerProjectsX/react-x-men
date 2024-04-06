@@ -23,8 +23,7 @@ const FlatForm = () => {
       dateAvailable: data.dateAvailable,
       user: JSON.parse(localStorage.getItem("user_logged"))
     }
-
-    dispatch(addFlatToFirestore(flat));
+    await dispatch(addFlatToFirestore(flat));
     let param = 'C';
     navigate(`/dashboard`, { replace: false, state: { param } });
   };

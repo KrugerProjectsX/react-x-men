@@ -22,14 +22,11 @@ const Login = () => {
   const onSubmit = async (data) => {
     setIsProgress(true);
     const { email, password } = data;
-    
-    let passwordDecode=decode(password);
-
     try {
-      const querySnapshot = await getDocs(
+   
+   const querySnapshot = await getDocs(
         query(usersRef, where("email", "==", email))
       );
-
       if (!querySnapshot.empty) {
         const user = querySnapshot.docs[0].data();
         const userId = querySnapshot.docs[0].id;

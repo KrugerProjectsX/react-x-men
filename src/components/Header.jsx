@@ -37,7 +37,7 @@ export default function Header() {
                     <div className={'flex items-center justify-center mr-2'}>
                         <Button className={'text-secondary'} component={Link} to="/dashboard"  >Home</Button>
                         {user && (user.role === 'landlord' || user.role === 'admin' ) && <Button component={Link} to="/myflats" className={'text-secondary'}  onClick={() => setActiveButton('myflats')}>Mis Pisos</Button>}
-                        <Button className={'text-secondary'} component={Link} to="/flats">Pisos</Button>
+                        <Button className={'text-secondary'} component={Link} to="/my-favorites-flats">Favoritos</Button>
                         { user && user.role ==='admin' && <Button className={'text-secondary'} component={Link} to="/users">Usuarios</Button>}
                     </div>
                     <MenuTransitions user={user} setUser={setUser}/>

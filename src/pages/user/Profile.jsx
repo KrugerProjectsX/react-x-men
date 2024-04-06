@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import Header from "../../components/Header";
 import UserForm from "../../components/UserForm";
 import checkUserLogged from "../../services/actions";
+import UserFormHook from "../../components/UserFormHook";
 
 
 const Profile = () => {
@@ -13,7 +14,7 @@ const Profile = () => {
 
       <div>Profile</div>
       {/* <UserFormHook type={'create'}/> */}
-      <UserForm type={'view'} id={userId}/> 
+      <UserFormHook type={'view'} id={userId}/> 
     </>
   );
 };

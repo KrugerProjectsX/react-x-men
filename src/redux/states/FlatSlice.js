@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { db } from "../../firebase";
 
@@ -82,10 +82,10 @@ export const updateFlat=createAsyncThunk(
 
 
 // add flatfavorite to firestore
-export const FavoriteFlat = createAsyncThunk(
+export const favoriteFlat = createAsyncThunk(
   'flats/FavoriteFlat',
   async (user)=>{
-    const search = query(refFav, where("userId", "==",user ) );
+    const search = query(refFav, where("userId","==",user ) );
             const data = await getDocs(search);
             const allFlats = [];
             for (const item of data.docs){
@@ -93,6 +93,7 @@ export const FavoriteFlat = createAsyncThunk(
                 const dataFlat = await getDoc(refFlat);
                 allFlats.push({...dataFlat.data(), id: dataFlat.id, favorite: item.id});
             }
+            console.log("all"+allFlats)
       return allFlats;
   }
 );
@@ -112,7 +113,7 @@ export const FavoriteFlat = createAsyncThunk(
       .addCase(fetchFlats.fulfilled, (state, action) => { 
         state.flatsArray = action.payload;
       })
-      .addCase(FavoriteFlat.fulfilled, (state, action) => { 
+      .addCase(favoriteFlat.fulfilled, (state, action) => { 
         state.flatsArray = action.payload;
       })
       .addCase(addFlatToFirestore.fulfilled, (state, action)=>{

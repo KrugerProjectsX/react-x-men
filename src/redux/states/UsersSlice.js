@@ -8,11 +8,33 @@ import { db } from "../../firebase";
 export const addUserToFirestore = createAsyncThunk(
     'users/addUserToFirestore',
     async (user )=>{
-        const addUserRef = await addDoc(collection(db,'users'),user);
+      const querySnapshot = await getDocs(
+        query(collection(db,'users'), where("email", "==", user.email))
+      );
+
+      if(!querySnapshot.empty){
+        console.log("error")
+        throw new Error("Email existe");
+      }
+      const addUserRef = await addDoc(collection(db,'users'),user);
         const newUser = { id: addUserRef.id, user };
         return newUser;
     
     }
+);
+
+export const validateEmail = createAsyncThunk(
+  'users/validateEmail',
+  async (email)=>{
+    const querySnapshot = await getDocs(
+      query(collection(db,'users'), where("email", "==", email))
+    );
+    console.log("query,")
+    console.log(querySnapshot)
+    console.log("hace"+!querySnapshot.empty)
+      return !querySnapshot.empty;
+  
+  }
 );
 
 export  function getUserId() {
@@ -73,12 +95,17 @@ const UserSlice = createSlice({
     name: 'Users',
     initialState: {
         usersArray: [],
+        userEmailExiste: false,
       
     },
+    
     extraReducers: (builder) => {
       builder
       .addCase(fetchUsers.fulfilled, (state, action) => { 
         state.usersArray = action.payload;
+      })
+      .addCase(validateEmail.fulfilled, (state, action) => { 
+        state.userEmailExiste = action.payload;
       })
       .addCase(addUserToFirestore.fulfilled, (state, action)=>{
         state.usersArray.push(action.payload);
