@@ -5,7 +5,7 @@ const ProfileUpdate = () => {
   return (
     <>
       <Header></Header>
-      <h1>PROFILE update</h1>
+      <h1>PROFILE</h1>
       <UserForm type={"update"}></UserForm>
     </>
   );

@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { addUserToFirestore, updateUser } from "../redux/states/UsersSlice";
 import { useNavigate } from "react-router-dom";
+import { encode } from "../utilities/encryption";
 
 export default function UserFormHook({ type }) {
     const currentDate = new Date().toJSON().slice(0, 10);
@@ -13,7 +14,8 @@ export default function UserFormHook({ type }) {
             firstName: '',
             lastName: '',
             email: '',
-            birthDate: currentDate
+            birthDate: currentDate,
+            password: '',
         },
     });
 
@@ -28,10 +30,11 @@ export default function UserFormHook({ type }) {
  
     const onSubmit = async (data) => {
         const formattedDate = new Date(data.birthDate).toISOString().slice(0, 10);
-
+        const passwordCode= encode(data.password); 
+        console.log(passwordCode)
         if (type === 'create') {
             try {
-                 await dispatch(addUserToFirestore({ ...data, birthDate: formattedDate }));
+                 await dispatch(addUserToFirestore({ ...data, birthDate: formattedDate, password: passwordCode.toString() }));
                  navigate("/", { replace: true });
                 } catch (error) {
                     setErrorMessage(error.message);

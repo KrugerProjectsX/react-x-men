@@ -8,11 +8,6 @@ import { db } from "../../firebase";
 export const addUserToFirestore = createAsyncThunk(
     'users/addUserToFirestore',
     async (user )=>{
-
-      const querySnapshot = await getDocs(query(collection(db, 'users'), where('email', '==', user.email)));
-        if (!querySnapshot.empty) {
-            throw new Error('El correo electrónico ya está en uso');
-        }
         const addUserRef = await addDoc(collection(db,'users'),user);
         const newUser = { id: addUserRef.id, user };
         return newUser;

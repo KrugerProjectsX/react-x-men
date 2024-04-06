@@ -4,6 +4,8 @@ import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where } 
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { db } from "../../firebase";
 
+const ref = collection(db, "flats");
+const refFav = collection(db, "favorites");
 // add flat to firestore
 export const addFlatToFirestore = createAsyncThunk(
     'flats/addFlatToFirestore',
@@ -18,13 +20,12 @@ export const addFlatToFirestore = createAsyncThunk(
 export const myFlats = createAsyncThunk(
   'flats/myFlats',
   async (user) => {
-    const search = query(collection(db, "flats"), where("user", "==", user));
+    const search = query(ref, where("user", "==", user));
     const data = await getDocs(search);
-    const flats = data.docs.map((doc) => ({
-      id: doc.id,
-      flat: doc.data(),
-    }));
-    console.log("Mapped flats:", flats);
+    const flats = data.docs.map((item) => {
+        return { ...item.data(), id: item.id }
+    });
+
     
     return flats;
   }
@@ -33,13 +34,20 @@ export const myFlats = createAsyncThunk(
 // fetch flats
 export const fetchFlats = createAsyncThunk(
     'flats/fetchFlats',
-    async () => {
-      const querySnapshot = await getDocs(collection(db, 'flats'));
-      const flats = querySnapshot.docs.map((doc)=>({
-        id: doc.id,
-        flat: doc.data(),
-      }));
-      return flats;
+    async (user) => {
+      const data = await getDocs(ref);
+      const allFlats = [];
+      for(const item of data.docs){
+          const search = query( refFav, where("userId", "==",user ), where('flatId','==',item.id));
+          const dataFav = await getDocs(search);
+          let favorite =false;
+          if(dataFav.docs.length > 0){
+              favorite = dataFav.docs[0].id;
+          }
+          const flatsWithFav = {...item.data(), id: item.id, favorite: favorite};
+          allFlats.push(flatsWithFav)
+      }
+      return allFlats;
     }
   );
 
@@ -73,11 +81,28 @@ export const updateFlat=createAsyncThunk(
 );
 
 
+// add flatfavorite to firestore
+export const FavoriteFlat = createAsyncThunk(
+  'flats/FavoriteFlat',
+  async (user)=>{
+    const search = query(refFav, where("userId", "==",user ) );
+            const data = await getDocs(search);
+            const allFlats = [];
+            for (const item of data.docs){
+                const refFlat = doc(db, "flats", item.data().flatId);
+                const dataFlat = await getDoc(refFlat);
+                allFlats.push({...dataFlat.data(), id: dataFlat.id, favorite: item.id});
+            }
+      return allFlats;
+  }
+);
+
+
+
   const FlatSlice = createSlice({
     name: 'Flats',
     initialState: {
-        flatsArray: [],
-        myFlatsArray: [],
+        flatsArray: []
     },
     extraReducers: (builder) => {
       builder
@@ -85,6 +110,9 @@ export const updateFlat=createAsyncThunk(
         state.flatsArray = action.payload;
       })
       .addCase(fetchFlats.fulfilled, (state, action) => { 
+        state.flatsArray = action.payload;
+      })
+      .addCase(FavoriteFlat.fulfilled, (state, action) => { 
         state.flatsArray = action.payload;
       })
       .addCase(addFlatToFirestore.fulfilled, (state, action)=>{

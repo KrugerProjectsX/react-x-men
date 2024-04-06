@@ -3,10 +3,10 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import { db } from "../../firebase";
-import Header from "../../components/Header";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { decode } from "../../utilities/encryption";
 
 const Login = () => {
   const {
@@ -22,6 +22,8 @@ const Login = () => {
   const onSubmit = async (data) => {
     setIsProgress(true);
     const { email, password } = data;
+    
+    let passwordDecode=decode(password);
 
     try {
       const querySnapshot = await getDocs(
@@ -36,14 +38,15 @@ const Login = () => {
           setErrorAlert("Usuario o Contraseña incorrecta.");
           return;
         }
-
-        if (user.password !== password) {
+    
+        let userPasword=decode(user.password)
+        if (userPasword !== password) {
           console.log("Usuario o Contraseña incorrecta.");
           setErrorAlert("Usuario o Contraseña incorrecta.");
           return;
         }
 
-        if (user.password === password) {
+        if (userPasword === password) {
           localStorage.setItem("user_logged", JSON.stringify(userId));
           setIsProgress(false);
           navigate("/dashboard", { replace: true });
