@@ -27,7 +27,7 @@ export default function MenuTransitions({ user, setUser }) {
   };
 
   const profile = () => {
-    navigate("/profile", { replace: true });
+    navigate(`/profile/${userId}`, { replace: true });
   };
   const account = () => {
     navigate(`/profile/edit/${userId}`, { replace: true });

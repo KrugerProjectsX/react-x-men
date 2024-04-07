@@ -6,7 +6,8 @@ const RegisterUser = () => {
   return (
     <>
  
-    <div>Profile</div>
+ <h2 className="text-center text-3xl font-bold text-blue-400 mt-8">Registro de Usuario</h2>
+     
     <UserFormHook type={'create'}/>
   </>
   )

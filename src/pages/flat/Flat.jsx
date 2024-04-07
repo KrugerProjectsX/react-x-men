@@ -11,7 +11,7 @@ const Flat = () => {
     <Header/>
     <h1>View Flat</h1>
     <FlatForm type={'view'} id={id}/>
-    <Messages flatId={id}/>
+    {/* <Messages flatId={id}/> */}
     </>
     )
 }

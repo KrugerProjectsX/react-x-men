@@ -12,7 +12,9 @@ import { Box, MenuItem, Select, Slider, TextField } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import CircularProgress from '@mui/material/CircularProgress';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function UsersTable() {
   const ref = collection(db, "users");
@@ -142,13 +144,13 @@ export default function UsersTable() {
           <TableHead className="bg-gray-50">
             <TableRow>
               <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                First Name
+                Nombre
               </TableCell>
               <TableCell
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 align="right"
               >
-                Last Name
+                Apellido
               </TableCell>
               <TableCell
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -160,20 +162,20 @@ export default function UsersTable() {
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 align="right"
               >
-                Birth Date
+                Fecha Nacimiento
               </TableCell>
               <TableCell
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 align="right"
               >
-                is Admin
+                Role
               </TableCell>
               <TableCell
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 align="right"
               >
                 
-                Flats Count
+                Cantidad Pisos
               </TableCell>
               <TableCell
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -205,7 +207,14 @@ export default function UsersTable() {
                   {row.flats}
                 </TableCell>
                 <TableCell className="px-6 py-4 whitespace-nowrap">
-                <Button href={`/profile/edit/${row.id}`} >View</Button>
+                <ButtonGroup variant="text"  size="small" aria-label="Basic button group">
+                <Button href={`/profile/edit/${row.id}`} >
+                  <VisibilityIcon />
+                </Button>
+                <Button  >
+                  <DeleteIcon />
+                </Button>
+                </ButtonGroup>
                 </TableCell>
               
               </TableRow>

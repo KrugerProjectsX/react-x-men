@@ -10,38 +10,53 @@ import {
   TableRow,
   Button,
 } from "@mui/material";
-import ShowModal from "./ShowModal";
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+
 
 import { useDispatch, useSelector } from "react-redux";
 import { deleteFlat, favoriteFlat, fetchFlats, myFlats } from "../redux/states/FlatSlice";
 import {  useNavigate } from "react-router-dom";
+import CircularProgress from '@mui/material/CircularProgress';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import EditIcon from '@mui/icons-material/Edit';
+import ButtonGroup from "@mui/material/ButtonGroup";
 
 const FlatTable = ({type}) => {
   const user= JSON.parse(localStorage.getItem("user_logged"))
   const data = useSelector((state)=>state.flats.flatsArray);
   const [showAlert, setShowAlert] = useState(false);
   const [flag, setFlag ] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
 
 
   if (type === 'all-flats') {
+
   useEffect(()=>{
     dispatch(fetchFlats(user));
   },[dispatch])
+
   }
 
   if (type === 'favorites-flats') {
+
     useEffect(()=>{
+      
       dispatch(favoriteFlat(user));
+    
+
     },[dispatch])
+
     }
 
     if (type === 'my-flats' ) {
+  
       useEffect(()=>{
         dispatch(myFlats(user));
+
+
       },[dispatch])
+
       }
 
   
@@ -49,7 +64,7 @@ const FlatTable = ({type}) => {
     dispatch(deleteFlat(id));
   }
 
-  const navigate= useNavigate();
+  const navigate= useNavigate(); 
   const handleClick =()=> {
     navigate ("/addflat")
   }
@@ -69,26 +84,32 @@ const removeFavorite = async (id) => {
     
 }
 
+
   return (
     <div>
-      <h1>Flats</h1>
- 
-      <button onClick={handleClick}> 
+      {type==="my-flats"&&(<button onClick={handleClick}> 
         Agregar Flat
-      </button>
+      </button>)}
+ 
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell align="right">Ciudad</TableCell>
-              <TableCell align="right">Nombre de Calle</TableCell>
-              <TableCell align="right">Número de Calle</TableCell>
-              <TableCell align="right">Área(m2)</TableCell>
-              <TableCell align="right">has AC</TableCell>
-              <TableCell align="right">Año de construcción</TableCell>
-              <TableCell align="right">Precio de Renta</TableCell>
-              <TableCell align="right">Date Available</TableCell>
+              <TableCell align="right" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ciudad</TableCell>
+              <TableCell align="right" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre de Calle</TableCell>
+              <TableCell align="right" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Número de Calle</TableCell>
+              <TableCell align="right"className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" >Área(m2)</TableCell>
+              <TableCell align="right" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">has AC</TableCell>
+              <TableCell align="right" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Año de construcción</TableCell>
+              <TableCell align="right" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio de Renta</TableCell>
+              <TableCell align="right" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Disponible</TableCell>
               {(type === 'all-flats'|| type=== 'favorite-flats') && <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right"></TableCell>}
+              <TableCell
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                align="right"
+              >
+                Acciones
+              </TableCell>
                         <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right"></TableCell>
             </TableRow>
           </TableHead>
@@ -106,23 +127,26 @@ const removeFavorite = async (id) => {
                 <TableCell align="right">{row.yearBuilt}</TableCell>
                 <TableCell align="right">$ {row.rentPrice}</TableCell>
                 <TableCell align="right">{row.dateAvailable}</TableCell>
-                <TableCell align="right">
-                  <ShowModal idFlat={row.id}/>
-                </TableCell>
+              
                 {(type === 'all-flats'|| type=== 'favorite-flats') && <TableCell className="px-6 py-4 whitespace-nowrap" >
                                 {!row.favorite && <Button onClick={()=>addFavorite(row.id)}>Add Favorite</Button>}
                                 {row.favorite && <Button onClick={()=>removeFavorite(row.favorite)}>Remove Favorite</Button>}
                             </TableCell> }
                             <TableCell className="px-6 py-4 whitespace-nowrap">
-                                <Button href={`/flat/${row.id}`} >View</Button>
-                                {type === 'my-flats' && <Button href={`/flats/edit/${row.id}`} >Edit</Button>}
+                            <ButtonGroup variant="text"  size="small" aria-label="Basic button group">
+              
+                                <Button href={`/flat/${row.id}`} > <VisibilityIcon /></Button>
+                                {type === 'my-flats' && <Button href={`/flat/edit/${row.id}`} ><EditIcon></EditIcon></Button>}
+                                </ButtonGroup>
                             </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+      
     </div>
+    
   );
 };
 

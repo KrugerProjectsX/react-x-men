@@ -5,7 +5,8 @@ const ProfileUpdate = () => {
   return (
     <>
       <Header></Header>
-      <h1>PROFILE</h1>
+
+      <h2 className="text-center text-3xl font-bold text-blue-400 mt-8"> Editar Perfil Usuario</h2>
       <UserFormHook type={"update"}></UserFormHook>
     </>
   );

@@ -16,6 +16,7 @@ import AddFlats from "./pages/flat/AddFlats";
 import Flat from "./pages/flat/Flat";
 import ProfileUpdate from "./pages/user/ProfileUpdate";
 import FlatsFavorites from "./pages/flat/FlatsFavorites";
+import FlatUpdate from "./pages/flat/FlatUpdate";
 
 function App() {
   return (
@@ -24,14 +25,15 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/dashboard" element={<Home />} />
         <Route path="/users" element={<Users />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/:userId" element={<Profile />} />
         <Route path={"/profile/edit/:userId"} element={<ProfileUpdate/>}/>
         <Route path="/register" element={<RegisterUser></RegisterUser>} />
         <Route path="/userregister" element={<UserRegister />} />
         <Route path="/flats" element={<Flats />} />
         <Route path="/myflats" element={<MyFlats />} />
         <Route path="/addflat" element={<AddFlats />} />
-        <Route path={"/flat/:id"} element={<Flat />} />
+        <Route path={"/flat/:idFlat"} element={<Flat />} />
+        <Route path={"/flat/edit/:idFlat"} element={<FlatUpdate />} />
         <Route path={"/my-favorites-flats"} element={<FlatsFavorites/>}/>
       </Routes>
     </>

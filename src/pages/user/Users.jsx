@@ -6,7 +6,7 @@ const Users = () => {
   checkUserLogged()
   return (<>
       <Header></Header>
-       <h1>Usuarios</h1>
+      <h2 className="text-center text-3xl font-bold text-blue-400 mt-8">Usuarios</h2>
       <UsersTable></UsersTable>
   </>
     )

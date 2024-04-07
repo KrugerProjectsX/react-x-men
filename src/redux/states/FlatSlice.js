@@ -16,7 +16,17 @@ export const addFlatToFirestore = createAsyncThunk(
     }
 );
 
-
+  // get flat 
+  export const getFlat = createAsyncThunk(
+    'flats/getFlat', 
+    async (id) => {
+      const ref = doc(db, "flats", id);
+      const dataFlat = await getDoc(ref);
+      const flat = dataFlat.data();
+      return flat;
+    }
+  );
+  
 export const myFlats = createAsyncThunk(
   'flats/myFlats',
   async (user) => {
@@ -69,11 +79,14 @@ export const fetchFlats = createAsyncThunk(
 export const updateFlat=createAsyncThunk(
   'flat/updateflats',
   async(editedFlat)=>{
+    console.log( editedFlat.id, "idflat")
     const flats = await getDocs(collection(db,'flats'));
+    console.log(flats)
     for(let snap of flats.docs){
       if(snap.id === editedFlat.id){
         const flatRef = doc(db,'flats', snap.id);
-        await updateDoc(flatRef, editedFlat.flat);
+
+        await updateDoc(flatRef, editedFlat);
       }
     }
     return editedFlat;
@@ -87,13 +100,14 @@ export const favoriteFlat = createAsyncThunk(
   async (user)=>{
     const search = query(refFav, where("userId","==",user ) );
             const data = await getDocs(search);
+        
             const allFlats = [];
             for (const item of data.docs){
                 const refFlat = doc(db, "flats", item.data().flatId);
                 const dataFlat = await getDoc(refFlat);
                 allFlats.push({...dataFlat.data(), id: dataFlat.id, favorite: item.id});
             }
-            console.log("all"+allFlats)
+           
       return allFlats;
   }
 );
@@ -103,12 +117,16 @@ export const favoriteFlat = createAsyncThunk(
   const FlatSlice = createSlice({
     name: 'Flats',
     initialState: {
-        flatsArray: []
+        flatsArray: [],
+        flat:{},
     },
     extraReducers: (builder) => {
       builder
       .addCase(myFlats.fulfilled, (state, action) => { 
         state.flatsArray = action.payload;
+      })
+      .addCase(getFlat.fulfilled, (state, action) => { 
+        state.flat=action.payload;
       })
       .addCase(fetchFlats.fulfilled, (state, action) => { 
         state.flatsArray = action.payload;
