@@ -42,6 +42,7 @@ export default function UserFormHook({ type }) {
     handleSubmit,
     register,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -75,14 +76,13 @@ export default function UserFormHook({ type }) {
     .toISOString()
     .split("T")[0];
 
-    let nameButton=type==="create"?"Crear":"Modificar";
+  let nameButton = type === "create" ? "Crear" : "Modificar";
 
   const onSubmit = async (data) => {
     const formattedDate = new Date(data.birthDate).toISOString().slice(0, 10);
     const passwordCode = encode(data.password);
 
     if (type === "create") {
-     
       try {
         let resp = await dispatch(
           addUserToFirestore({
@@ -146,7 +146,6 @@ export default function UserFormHook({ type }) {
     }
 
     if (type === "update") {
-  
       data["id"] = userId;
       await dispatch(updateUser({ ...data, birthDate: formattedDate }));
       Swal.fire({
@@ -159,7 +158,8 @@ export default function UserFormHook({ type }) {
   };
 
   const inputRole = () => {
-    if (roleLoged === "admin") {
+    console.log(roleLoged)
+    if (roleLoged === "admin" || !roleLoged) {
       return (
         <TextField
           select
@@ -188,13 +188,13 @@ export default function UserFormHook({ type }) {
     }
   };
 
-  const handeClikCancel=()=>{
-    if(type==="create"){
-      navigate("/", { replace: true });  
-      return
+  const handeClikCancel = () => {
+    if (type === "create") {
+      navigate("/", { replace: true });
+      return;
     }
     navigate("/dashboard", { replace: true });
-  }
+  };
   return (
     <Box
       component={"form"}
@@ -238,7 +238,7 @@ export default function UserFormHook({ type }) {
             variant="outlined"
             className="mb-4 w-full"
           />
-          
+
           {errors.lastName && (
             <Alert className="mb-3" severity="warning">
               {errors.lastName.message}
@@ -259,37 +259,58 @@ export default function UserFormHook({ type }) {
             variant="outlined"
             className="mb-4 w-full"
           />
-          
+
           {errors.email && (
             <Alert className="mb-3" severity="warning">
               {errors.email.message}
             </Alert>
           )}
           {type === "create" && (
-            <TextField
-              type={"password"}
-              label={type === "view" ? "" : "Password"}
-              {...register("password", {
-                required: "Password es requerido, Minimo 6 caracteres, Al menos 1 caracter especial",
-                pattern: {
-                  value: /^(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{6,15}$/,
-                  message: "El password no es valido",
-                },
-              })}
-        
-              variant="outlined"
-              className="mb-4 w-full"
-            />
-           
-           
-          )
-          }
-           {errors.password && 
-              <Alert className="mb-3" severity="warning">
-               "Password es requerido, Minimo 6 caracteres, Al menos 1 caracter especial"
-              </Alert>
-            }
+            <div>
+             
+              <div className="mb-4 w-full">
+                <TextField
+                  type="password"
+                  label={type === "view" ? "" : "Password"}
+                  {...register("password", {
+                    required:
+                      "Password es requerido, Minimo 6 caracteres, Al menos 1 caracter especial",
+                    pattern: {
+                      value: /^(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{6,15}$/,
+                      message: "El password no es válido",
+                    },
+                  })}
+                  variant="outlined"
+                  className="w-full"
+                />
+                {errors.password && (
+                  <Alert className="mt-2" severity="warning">
+                    {errors.password.message}
+                  </Alert>
+                )}
+              </div>
 
+              <div className="mb-4 w-full">
+                <TextField
+                  type="password"
+                  label={type === "view" ? "" : "Repetir Password"}
+                  {...register("passwordRepeat", {
+                    required: "Repetir Password es requerido",
+                    validate: (value) =>
+                      value === getValues("password") ||
+                      "Las contraseñas no coinciden",
+                  })}
+                  variant="outlined"
+                  className="w-full"
+                />
+                {errors.passwordRepeat && (
+                  <Alert className="mt-2" severity="warning">
+                    {errors.passwordRepeat.message}
+                  </Alert>
+                )}
+              </div>
+            </div>
+          )}
           <TextField
             disabled={type === "view"}
             label={
@@ -306,8 +327,8 @@ export default function UserFormHook({ type }) {
             variant="outlined"
             className="mb-4 w-full"
           />
-          
-          {errors.birthDate &&  (
+
+          {errors.birthDate && (
             <Alert className="mb-3" severity="warning">
               {errors.birthDate.message}
             </Alert>
@@ -327,11 +348,11 @@ export default function UserFormHook({ type }) {
                 {nameButton}
               </Button>
               <Button
-          onClick={handeClikCancel}
-          className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-         Cancelar
-        </Button>
+                onClick={handeClikCancel}
+                className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Cancelar
+              </Button>
             </ButtonGroup>
           )}
         </>

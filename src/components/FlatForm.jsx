@@ -20,7 +20,8 @@ const FlatForm = ({type}) => {
   }, [dispatch]);
  
   useEffect(() => {
-    setValue("city", getFlatId.city);
+    if(type==="update"|| type==="view"){
+      setValue("city", getFlatId.city);
     setValue("rentPrice", getFlatId.rentPrice);
     setValue("areaSize", getFlatId.areaSize);
     setValue("hasAc", getFlatId.hasAc);
@@ -28,7 +29,9 @@ const FlatForm = ({type}) => {
     setValue("streetNumber", getFlatId.streetNumber);
     setValue("streetName", getFlatId.streetName);
     setValue("dateAvailable", getFlatId.dateAvailable);
-  }, [getFlatId]);
+  
+    }
+    }, [getFlatId]);
   const {
     register,
     handleSubmit, setValue,
@@ -50,7 +53,7 @@ const FlatForm = ({type}) => {
   const currentDate = new Date().toJSON().slice(0, 10);
   const navigate = useNavigate();
 
-  let nameButton=type==="create"?"Crear":"Modificar";
+  let nameButton= type==="update"?"Modificar":"Crear";
 
   const onSubmit = async (data) => {
     const flat = {
@@ -65,7 +68,9 @@ const FlatForm = ({type}) => {
       user: userId,
     };
     if(type=== "create")
-    {  await dispatch(addFlatToFirestore(flat));
+    {  
+      let res=await dispatch(addFlatToFirestore(flat));
+      console.log(res,"res");
       let param = "C";
       Swal.fire({
         title: "Creado correctamente!",

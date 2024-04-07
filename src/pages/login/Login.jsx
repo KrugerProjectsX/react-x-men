@@ -10,6 +10,7 @@ import { decode } from "../../utilities/encryption";
 import Swal from 'sweetalert2';
 
 const Login = () => {
+  localStorage.clear();
   const {
     register,
     handleSubmit,

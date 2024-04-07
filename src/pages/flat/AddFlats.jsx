@@ -5,7 +5,7 @@ const AddFlats = () => {
   return (
     <>
       <Header></Header>
-      <FlatForm></FlatForm>
+      <FlatForm type={"create"}></FlatForm>
     </>
   );
 };
