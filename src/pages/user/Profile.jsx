@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import Header from "../../components/Header";
-import UserForm from "../../components/UserForm";
+
 import checkUserLogged from "../../services/actions";
 import UserFormHook from "../../components/UserFormHook";
 

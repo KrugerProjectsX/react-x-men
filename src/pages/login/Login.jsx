@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { decode } from "../../utilities/encryption";
+import Swal from 'sweetalert2';
 
 const Login = () => {
   const {
@@ -27,6 +28,7 @@ const Login = () => {
    const querySnapshot = await getDocs(
         query(usersRef, where("email", "==", email))
       );
+      console.log("vacio"+querySnapshot.empty); 
       if (!querySnapshot.empty) {
         const user = querySnapshot.docs[0].data();
         const userId = querySnapshot.docs[0].id;
@@ -46,8 +48,19 @@ const Login = () => {
         if (userPasword === password) {
           localStorage.setItem("user_logged", JSON.stringify(userId));
           setIsProgress(false);
+          Swal.fire({
+            title: "Ingreso Correcto!",
+            text: "Se autentificado correctamente.",
+            icon: "success"
+          });
           navigate("/dashboard", { replace: true });
         }
+      }else{
+        Swal.fire({
+          title: "Error!",
+          text: "Aún no se encuentra Registrado!",
+          icon: "error"
+        });
       }
     } catch (error) {
       console.error("Error al iniciar sesión:", error);

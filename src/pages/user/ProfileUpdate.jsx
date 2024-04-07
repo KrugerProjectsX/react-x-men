@@ -1,12 +1,12 @@
 import Header from "../../components/Header";
-import UserForm from "../../components/UserForm";
+import UserFormHook from "../../components/UserFormHook";
 
 const ProfileUpdate = () => {
   return (
     <>
       <Header></Header>
       <h1>PROFILE</h1>
-      <UserForm type={"update"}></UserForm>
+      <UserFormHook type={"update"}></UserFormHook>
     </>
   );
 };

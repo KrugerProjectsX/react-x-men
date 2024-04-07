@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { db } from "../../firebase";
 
@@ -23,32 +23,17 @@ export const addUserToFirestore = createAsyncThunk(
     }
 );
 
-export const validateEmail = createAsyncThunk(
-  'users/validateEmail',
-  async (email)=>{
-    const querySnapshot = await getDocs(
-      query(collection(db,'users'), where("email", "==", email))
-    );
-    console.log("query,")
-    console.log(querySnapshot)
-    console.log("hace"+!querySnapshot.empty)
-      return !querySnapshot.empty;
-  
+  // get user 
+export const getUser = createAsyncThunk(
+  'users/getUser', 
+  async (id) => {
+    const ref = doc(db, "users", id);
+    const dataUser = await getDoc(ref);
+    const user = dataUser.data();
+    return user;
   }
 );
 
-export  function getUserId() {
-  return JSON.parse(localStorage.getItem('user_logged')) || false;
-}
-export async function getUserLogged() {
-  const userId = getUserId();
-  if (userId) {
-      const ref = doc(db, "users", userId);
-      const dataUser = await getDoc(ref);
-      return  {...dataUser.data()};
-
-  }
-}
 // fetch users
 export const fetchUsers = createAsyncThunk(
   'users/fetchUsers', 
@@ -58,6 +43,7 @@ export const fetchUsers = createAsyncThunk(
       id: doc.id,
       user: doc.data(),
     }));
+
     return users;
   }
 );
@@ -66,11 +52,15 @@ export const fetchUsers = createAsyncThunk(
  export const updateUser=createAsyncThunk(
   'user/updateUsers',
   async(editedUser)=>{
+    console.log(editedUser,"user");
     const users = await getDocs(collection(db,'users'));
     for(let snap of users.docs){
       if(snap.id === editedUser.id){
         const usersRef = doc(db,'users', snap.id);
-        await updateDoc(usersRef, editedUser.user);
+
+        //await updateDoc(usersRef, editedUser.user);
+        delete editedUser.password;
+        await updateDoc(usersRef, editedUser);
       }
     }
     return editedUser;
@@ -95,7 +85,7 @@ const UserSlice = createSlice({
     name: 'Users',
     initialState: {
         usersArray: [],
-        userEmailExiste: false,
+        user:{},
       
     },
     
@@ -104,8 +94,8 @@ const UserSlice = createSlice({
       .addCase(fetchUsers.fulfilled, (state, action) => { 
         state.usersArray = action.payload;
       })
-      .addCase(validateEmail.fulfilled, (state, action) => { 
-        state.userEmailExiste = action.payload;
+      .addCase(getUser.fulfilled, (state, action) => { 
+        state.user=action.payload;
       })
       .addCase(addUserToFirestore.fulfilled, (state, action)=>{
         state.usersArray.push(action.payload);

@@ -8,6 +8,7 @@ import { getUserLogged } from '../services/users.js';
 import { Link } from 'react-router-dom';
 
 
+
 export default function Header() {
     const [user, setUser] = useState(null);
     const [activeButton, setActiveButton] = useState(null);
@@ -18,12 +19,13 @@ export default function Header() {
 
     const getUserData = async () => {
         const responseUser = await getUserLogged();
+        localStorage.setItem('role', responseUser.role)
         setUser(responseUser);
     }
     useEffect(() => {
         processData();
     }, [])
-    
+
     return (
         <div>
             <AppBar position="static">

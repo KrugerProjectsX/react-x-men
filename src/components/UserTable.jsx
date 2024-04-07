@@ -10,8 +10,9 @@ import { getDocs, query, where, collection } from "firebase/firestore";
 import { db } from "../firebase";
 import { Box, MenuItem, Select, Slider, TextField } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import Button from '@mui/material/Button';
-import ButtonGroup from '@mui/material/ButtonGroup';
+import Button from "@mui/material/Button";
+import ButtonGroup from "@mui/material/ButtonGroup";
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function UsersTable() {
   const ref = collection(db, "users");
@@ -19,10 +20,12 @@ export default function UsersTable() {
   const [userType, setUserType] = useState("");
   const [flatsCounter, setFlatsCounter] = useState("");
   const [valueSlider, setValueSlider] = React.useState([18, 120]);
+  const [loading, setLoading] = useState(false);
 
   const [users, setUsers] = useState([]);
 
   const getData = async () => {
+    setLoading(true);
     let arrayWhere = [];
 
     if (userType) {
@@ -83,13 +86,135 @@ export default function UsersTable() {
 
       usersSet.push(userWithFlats);
     }
-
+    setLoading(false);
     setUsers(usersSet);
   };
 
   useEffect(() => {
     getData();
   }, [userType, flatsCounter, valueSlider]);
+
+  const tablaUsers = () => {
+    if(loading){
+      return (<div className="flex justify-center items-center h-screen">
+      <CircularProgress color="success" className="text-green-500" />
+    </div>
+    )
+    }
+
+    //sort user
+    function descendingComparator(a, b, orderBy) {
+      if (b[orderBy] < a[orderBy]) {
+        return -1;
+      }
+      if (b[orderBy] > a[orderBy]) {
+        return 1;
+      }
+      return 0;
+    }
+    
+    function getComparator(order, orderBy) {
+      return order === 'desc'
+        ? (a, b) => descendingComparator(a, b, orderBy)
+        : (a, b) => -descendingComparator(a, b, orderBy);
+    }
+    
+    function stableSort(array, comparator) {
+      const stabilizedThis = array.map((el, index) => [el, index]);
+      stabilizedThis.sort((a, b) => {
+        const order = comparator(a[0], b[0]);
+        if (order !== 0) {
+          return order;
+        }
+        return a[1] - b[1];
+      });
+      return stabilizedThis.map((el) => el[0]);
+    }
+    
+
+
+    return (
+      <TableContainer>
+        <Table
+          className="min-w-full divide-y divide-gray-200"
+          aria-label="simple table"
+        >
+          <TableHead className="bg-gray-50">
+            <TableRow>
+              <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                First Name
+              </TableCell>
+              <TableCell
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                align="right"
+              >
+                Last Name
+              </TableCell>
+              <TableCell
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                align="right"
+              >
+                Email
+              </TableCell>
+              <TableCell
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                align="right"
+              >
+                Birth Date
+              </TableCell>
+              <TableCell
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                align="right"
+              >
+                is Admin
+              </TableCell>
+              <TableCell
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                align="right"
+              >
+                
+                Flats Count
+              </TableCell>
+              <TableCell
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                align="right"
+              >
+                Acciones
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody className="bg-white divide-y divide-gray-200">
+            {users.map((row) => (
+              <TableRow key={row.id}>
+                <TableCell className="px-6 py-4 whitespace-nowrap">
+                  {row.firstName}
+                </TableCell>
+                <TableCell className="px-6 py-4 whitespace-nowrap">
+                  {row.lastName}
+                </TableCell>
+                <TableCell className="px-6 py-4 whitespace-nowrap">
+                  {row.email}
+                </TableCell>
+                <TableCell className="px-6 py-4 whitespace-nowrap">
+                  {row.birthDate}
+                </TableCell>
+                <TableCell className="px-6 py-4 whitespace-nowrap">
+                  {row.role}
+                </TableCell>
+                <TableCell className="px-6 py-4 whitespace-nowrap">
+                  {row.flats}
+                </TableCell>
+                <TableCell className="px-6 py-4 whitespace-nowrap">
+                <Button href={`/profile/edit/${row.id}`} >View</Button>
+                </TableCell>
+              
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+  };
 
   return (
     <>
@@ -107,9 +232,7 @@ export default function UsersTable() {
             value={userType}
             onChange={(e) => setUserType(e.target.value)}
           >
-            <option key="none" value="">
-              none
-            </option>
+            <option key="none" value=""></option>
             <option key="landlord" value="landlord">
               Landlords
             </option>
@@ -162,90 +285,7 @@ export default function UsersTable() {
         </div>
       </Box>
 
-      <TableContainer>
-        <Table
-          className="min-w-full divide-y divide-gray-200"
-          aria-label="simple table"
-        >
-          <TableHead className="bg-gray-50">
-            <TableRow>
-              <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                First Name
-              </TableCell>
-              <TableCell
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                align="right"
-              >
-                Last Name
-              </TableCell>
-              <TableCell
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                align="right"
-              >
-                Email
-              </TableCell>
-              <TableCell
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                align="right"
-              >
-                Birth Date
-              </TableCell>
-              <TableCell
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                align="right"
-              >
-                is Admin
-              </TableCell>
-              <TableCell
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                align="right"
-              >
-                Flats Count
-              </TableCell>
-              <TableCell
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                align="right"
-              >
-                Acciones
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody className="bg-white divide-y divide-gray-200">
-            {users.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell className="px-6 py-4 whitespace-nowrap">
-                  {row.firstName}
-                </TableCell>
-                <TableCell className="px-6 py-4 whitespace-nowrap">
-                  {row.lastName}
-                </TableCell>
-                <TableCell className="px-6 py-4 whitespace-nowrap">
-                  {row.email}
-                </TableCell>
-                <TableCell className="px-6 py-4 whitespace-nowrap">
-                  {row.birthDate}
-                </TableCell>
-                <TableCell className="px-6 py-4 whitespace-nowrap">
-                  {row.role}
-                </TableCell>
-                <TableCell className="px-6 py-4 whitespace-nowrap">
-                  {row.flats}
-                </TableCell>
-                <TableCell className="px-6 py-4 whitespace-nowrap">
-                  <ButtonGroup
-                    variant="contained"
-                    aria-label="Basic button group"
-                  >
-                    <Button>One</Button>
-                    <Button>Two</Button>
-                    <Button>Three</Button>
-                  </ButtonGroup>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      {tablaUsers()}
     </>
   );
 }
