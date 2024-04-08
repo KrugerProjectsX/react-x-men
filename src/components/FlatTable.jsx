@@ -49,7 +49,10 @@ const FlatTable = ({ type }) => {
     maxRentPrice: ""
 });
 
-  const dispatch = useDispatch();
+
+const { city, minAreaSize, maxAreaSize, minRentPrice, maxRentPrice } = filters;
+  const [citysFiltered, setCitysFiltered] = useState([]);
+const dispatch = useDispatch();
 
   if (type === "all-flats") {
     useEffect(() => {
@@ -72,7 +75,46 @@ const FlatTable = ({ type }) => {
     }, [dispatch]);
   }
 
-  const handleDelete = (id) => {
+  useEffect(() => {
+    setLoading(true);
+    switch (type) {
+      case "all-flats":
+        dispatch(fetchFlats(user)).finally(() => setLoading(false));
+        break;
+      case "favorites-flats":
+        dispatch(favoriteFlat(user)).finally(() => setLoading(false));
+        break;
+      case "my-flats":
+        dispatch(myFlats(user)).finally(() => setLoading(false));
+        break;
+      default:
+        setLoading(false);
+        break;
+    }
+  }, [dispatch, type, user]);
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters({
+      ...filters,
+      [name]: value
+    });
+  };
+
+
+  const filteredData = data.filter((flat) => {
+    return (
+      flat.city.toLowerCase().includes(city.toLowerCase()) &&
+      (!minAreaSize || flat.areaSize >= parseInt(minAreaSize)) &&
+      (!maxAreaSize || flat.areaSize <= parseInt(maxAreaSize)) &&
+      (!minRentPrice || flat.rentPrice >= parseInt(minRentPrice)) &&
+      (!maxRentPrice || flat.rentPrice <= parseInt(maxRentPrice))
+    );
+  });
+
+console.log(citysFiltered, "filtrado city")
+  
+const handleDelete = (id) => {
     dispatch(deleteFlat(id));
   };
 
@@ -143,21 +185,19 @@ const FlatTable = ({ type }) => {
     setOrderBy(property);
   };
 
-  const sortedData = data.slice((page - 1) * itemsPerPage, page * itemsPerPage).sort((a, b) => {
-    if (order === 'asc') {
-      return a[orderBy] < b[orderBy] ? -1 : 1;
-    } else {
-      return b[orderBy] < a[orderBy] ? -1 : 1;
+  const sortedData = filteredData.sort((a, b) => {
+    if (orderBy === "city") {
+      return order === "asc" ? a.city.localeCompare(b.city) : b.city.localeCompare(a.city);
+    } else if (orderBy === "areaSize") {
+      return order === "asc" ? a.areaSize - b.areaSize : b.areaSize - a.areaSize;
+    } else if (orderBy === "rentPrice") {
+      return order === "asc" ? a.rentPrice - b.rentPrice : b.rentPrice - a.rentPrice;
     }
+    return 0;
   });
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters({
-        ...filters,
-        [name]: value
-    });
-};
+  const paginatedData = sortedData.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+
 
   const tableFlats = () => {
     if (loading) {
