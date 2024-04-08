@@ -8,7 +8,7 @@ const FlatUpdate = () => {
   return (
     <>
     <Header/>
-    <h1>FlatUpdate</h1>
+    <h2 className="text-center text-3xl font-bold text-blue-400 mt-8">Modificar Piso</h2>
     <FlatForm type={'update'} />
 
     </>

@@ -15,7 +15,6 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
 export default function MenuTransitions({ user, setUser }) {
-  console.log(user);
   const navigate = useNavigate();
 
   const userId = JSON.parse(localStorage.getItem("user_logged")) || [];

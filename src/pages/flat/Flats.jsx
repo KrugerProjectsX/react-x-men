@@ -8,6 +8,7 @@ const Flats = () => {
   return (
     <div>
       <Header></Header>
+      <h2 className="text-center text-3xl font-bold text-blue-400 mt-8">Pisos</h2>
       <FlatTable type={'all-flats'}></FlatTable>
     </div>
   );

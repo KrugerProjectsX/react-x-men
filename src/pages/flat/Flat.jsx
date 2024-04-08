@@ -11,7 +11,7 @@ const Flat = () => {
   return (
     <>
     <Header/>
-    <h1>View Flat</h1>
+    <h2 className="text-center text-3xl font-bold text-blue-400 mt-8">Informacion de Pisos</h2>
     <FlatForm type={'view'} id={idFlat}/>
     <Messages flatId={idFlat}/> 
     </>

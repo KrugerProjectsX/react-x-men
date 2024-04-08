@@ -296,7 +296,7 @@ export default function UsersTable() {
         </div>
         <div className={"w-full"}>
           <Typography id="input-slider" gutterBottom>
-            Age
+            Años
           </Typography>
           <Slider
             max={120}

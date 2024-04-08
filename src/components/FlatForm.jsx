@@ -9,12 +9,12 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import { useEffect } from "react";
 
 const FlatForm = ({type}) => {
-  console.log(type,"type")
+ 
   const userId=JSON.parse(localStorage.getItem("user_logged"));
   const getFlatId = useSelector((state)=>state.flats.flat);
   const {idFlat} = useParams();
   const dispatch = useDispatch();
-  console.log(idFlat,"flat id")
+ 
   useEffect(() => {
     dispatch(getFlat(idFlat));
   }, [dispatch]);
@@ -70,7 +70,7 @@ const FlatForm = ({type}) => {
     if(type=== "create")
     {  
       let res=await dispatch(addFlatToFirestore(flat));
-      console.log(res,"res");
+  
       let param = "C";
       Swal.fire({
         title: "Creado correctamente!",
@@ -82,11 +82,9 @@ const FlatForm = ({type}) => {
   
     if(type=== "update")
     {  
-      console.log(data)
       data["id"] = idFlat;
       data["user"]=userId;
       await dispatch(updateFlat(data));
-      console.log("edito")
       Swal.fire({
         title: "Editado correctamente!",
         text: "Piso editado correctamente.",
