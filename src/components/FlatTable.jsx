@@ -14,6 +14,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import CancelIcon from "@mui/icons-material/Cancel";
 import Pagination from "@mui/material/Pagination";
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+
 
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -276,12 +279,12 @@ const FlatTable = ({ type }) => {
                     <TableCell className="px-6 py-4 whitespace-nowrap">
                       {!row.favorite && (
                         <Button onClick={() => addFavorite(row.id)}>
-                          <AddIcon />
+                          <AddIcon className="text-green-500" />
                         </Button>
                       )}
                       {row.favorite && (
                         <Button onClick={() => removeFavorite(row.favorite)}>
-                          <CancelIcon />
+                          <FavoriteIcon className="text-red-400" />
                         </Button>
                       )}
                       <Button href={`/flat/${row.id}`}>
@@ -343,7 +346,9 @@ const FlatTable = ({ type }) => {
   return (
     <div>
       {type === "my-flats" && (
-        <button onClick={handleClick}>Agregar Flat</button>
+       <button onClick={handleClick} className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded mb-4">
+       <AddBoxIcon />
+     </button>
       )}
 
       {tableFlats()}

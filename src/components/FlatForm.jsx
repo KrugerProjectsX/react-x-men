@@ -95,6 +95,10 @@ const FlatForm = ({type}) => {
   };
 
   const handeClikCancel=()=>{
+    if(type==="create"){
+      navigate("/myflats", { replace: true });
+      return;
+      }
     if(type==="update"){
     navigate("/myflats", { replace: true });
     return;
