@@ -166,10 +166,10 @@ export default function UserFormHook({ type }) {
           SelectProps={{ native: true }}
           className="w-full mb-5"
           disabled={type === "view"}
-          {...register("role", { required: true })}
+          {...register("role", { required: "Elija el tipo de Rol." })}
           error={errors.role}
-          helperText={errors.role && "User type is required"}
         >
+          
           {roleLoged === "admin" && (
             <option key="admin" value="admin">
               admin
@@ -182,6 +182,7 @@ export default function UserFormHook({ type }) {
             renter
           </option>
         </TextField>
+        
       );
     }
   };
@@ -189,6 +190,10 @@ export default function UserFormHook({ type }) {
   const handeClikCancel = () => {
     if (type === "create") {
       navigate("/", { replace: true });
+      return;
+    }
+    if (type === "my-flats") {
+      navigate("/myflats", { replace: true });
       return;
     }
     navigate("/dashboard", { replace: true });
@@ -331,7 +336,14 @@ export default function UserFormHook({ type }) {
               {errors.birthDate.message}
             </Alert>
           )}
-          {inputRole()}
+          {inputRole()
+          }
+           {errors.role && (
+          <Alert className="mb-3" severity="warning">
+            {errors.role.message}
+          </Alert>
+        )}
+
           {type !== "view" && (
             <ButtonGroup
               className="flex justify-center space-x-4"

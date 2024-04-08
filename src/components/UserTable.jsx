@@ -12,6 +12,9 @@ import { Box, MenuItem, Select, Slider, TextField } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
+import TableSortLabel from '@mui/material/TableSortLabel';
+import Paper from "@mui/material/Paper";
+
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CircularProgress from '@mui/material/CircularProgress';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -100,11 +103,11 @@ export default function UsersTable() {
   }, [userType, flatsCounter, valueSlider]);
 
   const [page, setPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 9;
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+ 
+  const [orderBy, setOrderBy] = useState('');
+  const [order, setOrder] = useState('asc');
 
   const removeUser = async (id) => {
     const refRemoveFav = await doc(db, "users", id);
@@ -122,6 +125,25 @@ export default function UsersTable() {
     }
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  
+  const handleRequestSort = (property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  const sortedData = users.slice((page - 1) * itemsPerPage, page * itemsPerPage).sort((a, b) => {
+    if (order === 'asc') {
+      return a[orderBy] < b[orderBy] ? -1 : 1;
+    } else {
+      return b[orderBy] < a[orderBy] ? -1 : 1;
+    }
+  });
+  
   const tablaUsers = () => {
     if(loading){
       return (<div className="flex justify-center items-center h-screen">
@@ -130,69 +152,62 @@ export default function UsersTable() {
     )
     }
 
-    //sort user
-    function descendingComparator(a, b, orderBy) {
-      if (b[orderBy] < a[orderBy]) {
-        return -1;
-      }
-      if (b[orderBy] > a[orderBy]) {
-        return 1;
-      }
-      return 0;
-    }
-    
-    function getComparator(order, orderBy) {
-      return order === 'desc'
-        ? (a, b) => descendingComparator(a, b, orderBy)
-        : (a, b) => -descendingComparator(a, b, orderBy);
-    }
-    
-    function stableSort(array, comparator) {
-      const stabilizedThis = array.map((el, index) => [el, index]);
-      stabilizedThis.sort((a, b) => {
-        const order = comparator(a[0], b[0]);
-        if (order !== 0) {
-          return order;
-        }
-        return a[1] - b[1];
-      });
-      return stabilizedThis.map((el) => el[0]);
-    }
-    
-
     return (
      
     <div className="overflow-x-auto">
-    <TableContainer>
-      <Table className="min-w-full divide-y divide-gray-200" aria-label="simple table">
+    <TableContainer component={Paper}>
+      <Table  sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead className="bg-gray-50">
           <TableRow>
-            <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Nombre
+            <TableCell align="right" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <TableSortLabel
+                active={orderBy === 'firstName'}
+                direction={orderBy === 'firstName' ? order : 'asc'}
+                onClick={() => handleRequestSort('firstName')}
+                hideSortIcon={false}
+              >
+              *Nombre
+              </TableSortLabel>
             </TableCell>
-            <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">
-              Apellido
+            <TableCell align="right" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" >
+            <TableSortLabel
+                active={orderBy === 'lastName'}
+                direction={orderBy === 'lastName' ? order : 'asc'}
+                onClick={() => handleRequestSort('lastName')}
+                hideSortIcon={false}
+              >
+              *Apellido
+              </TableSortLabel>
             </TableCell>
-            <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">
+            <TableCell align="right" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" >
               Email
             </TableCell>
-            <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">
+            <TableCell align="right" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" >
               Fecha Nacimiento
             </TableCell>
-            <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">
+            <TableCell align="right" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" >
               Role
             </TableCell>
-            <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">
-              Cantidad Pisos
+            <TableCell align="right" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" >
+            <TableSortLabel
+                active={orderBy === 'flats'}
+                direction={orderBy === 'flats' ? order : 'asc'}
+                onClick={() => handleRequestSort('flats')}
+                hideSortIcon={false}
+              >
+              *Cantidad Pisos
+              </TableSortLabel>
             </TableCell>
-            <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">
+            <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" >
               Acciones
             </TableCell>
           </TableRow>
         </TableHead>
-        <TableBody className="bg-white divide-y divide-gray-200">
-          {users.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((row) => (
-            <TableRow key={row.id}>
+        <TableBody >
+          {sortedData.map((row) => (
+            <TableRow key={row.id}
+            sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            >
               <TableCell className="px-6 py-4 whitespace-nowrap">{row.firstName}</TableCell>
               <TableCell className="px-6 py-4 whitespace-nowrap">{row.lastName}</TableCell>
               <TableCell className="px-6 py-4 whitespace-nowrap">{row.email}</TableCell>

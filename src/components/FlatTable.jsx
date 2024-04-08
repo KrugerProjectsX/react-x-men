@@ -11,8 +11,9 @@ import {
 } from "@mui/material";
 import Swal from "sweetalert2";
 import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from '@mui/icons-material/Add';
-import CancelIcon from '@mui/icons-material/Cancel';
+import AddIcon from "@mui/icons-material/Add";
+import CancelIcon from "@mui/icons-material/Cancel";
+import Pagination from "@mui/material/Pagination";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -28,6 +29,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { addDoc, collection, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../firebase";
+import TableSortLabel from '@mui/material/TableSortLabel';
 
 const FlatTable = ({ type }) => {
   const user = JSON.parse(localStorage.getItem("user_logged"));
@@ -80,7 +82,7 @@ const FlatTable = ({ type }) => {
     navigate("/my-favorites-flats", { replace: true });
     setFlag(!flag);
   };
-  
+
   const removeFavorite = async (id) => {
     const refRemoveFav = await doc(db, "favorites", id);
     let result = await Swal.fire({
@@ -115,6 +117,29 @@ const FlatTable = ({ type }) => {
     }
   };
 
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 6;
+  const [orderBy, setOrderBy] = useState('');
+  const [order, setOrder] = useState('asc');
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleRequestSort = (property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  const sortedData = data.slice((page - 1) * itemsPerPage, page * itemsPerPage).sort((a, b) => {
+    if (order === 'asc') {
+      return a[orderBy] < b[orderBy] ? -1 : 1;
+    } else {
+      return b[orderBy] < a[orderBy] ? -1 : 1;
+    }
+  });
+
   const tableFlats = () => {
     if (loading) {
       return (
@@ -125,25 +150,47 @@ const FlatTable = ({ type }) => {
     }
 
     if (data.length === 0) {
-      return (
-        <>
-          <div className="flex justify-center items-center h-screen">
-            No hay datos en esta página
-          </div>
-        </>
-      );
+      if(type==="my-flats")
+      {
+        return (
+          <>
+            <div className="flex justify-center items-center h-screen text-lg text-gray-700">
+              No hay datos en esta página, Agrega pisos con el boton superior izquierdo. .
+            </div>
+          </>
+        );
+      }
+      
+      if(type==="favorites-flats")
+      {
+        return (
+          <>
+            <div className="flex justify-center items-center h-screen text-lg text-gray-700">
+              No hay datos en esta página, Agrega pisos favoritos desde la página <a href="/dashboard"> Home</a>.
+            </div>
+          </>
+        );
+      }
+     
     }
 
     return (
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
+          <TableHead className="bg-gray-50" >
             <TableRow>
               <TableCell
                 align="right"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Ciudad
+              <TableSortLabel
+                active={orderBy === 'city'}
+                direction={orderBy === 'city' ? order : 'asc'}
+                onClick={() => handleRequestSort('city')}
+                hideSortIcon={false}
+              >
+                *Ciudad
+                </TableSortLabel>
               </TableCell>
               <TableCell
                 align="right"
@@ -161,7 +208,14 @@ const FlatTable = ({ type }) => {
                 align="right"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Área(m2)
+                <TableSortLabel
+                active={orderBy === 'areaSize'}
+                direction={orderBy === 'areaSize' ? order : 'asc'}
+                onClick={() => handleRequestSort('areaSize')}
+                hideSortIcon={false}
+              >
+                *Área(m2)
+                </TableSortLabel>
               </TableCell>
               <TableCell
                 align="right"
@@ -178,8 +232,14 @@ const FlatTable = ({ type }) => {
               <TableCell
                 align="right"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Precio de Renta
+              ><TableSortLabel
+              active={orderBy === 'rentPrice'}
+              direction={orderBy === 'rentPrice' ? order : 'asc'}
+              onClick={() => handleRequestSort('rentPrice')}
+              hideSortIcon={false}
+            > 
+                *Precio de Renta
+                </TableSortLabel>
               </TableCell>
               <TableCell
                 align="right"
@@ -187,94 +247,95 @@ const FlatTable = ({ type }) => {
               >
                 Fecha Disponible
               </TableCell>
-             
+
               <TableCell
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 align="right"
               >
                 Acciones
               </TableCell>
-              
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((row) => (
-              <TableRow
-                key={row.id}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell align="right">{row.city}</TableCell>
-                <TableCell align="right">{row.streetName}</TableCell>
-                <TableCell align="right">{row.streetNumber}</TableCell>
-                <TableCell align="right">{row.areaSize}</TableCell>
-                <TableCell align="right">{row.hasAc ? "Si" : "No"}</TableCell>
-                <TableCell align="right">{row.yearBuilt}</TableCell>
-                <TableCell align="right">$ {row.rentPrice}</TableCell>
-                <TableCell align="right">{row.dateAvailable}</TableCell>
+            {sortedData
+              .map((row) => (
+                <TableRow
+                  key={row.id}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell className="px-6 py-4 whitespace-nowrap">{row.city}</TableCell>
+                  <TableCell className="px-6 py-4 whitespace-nowrap">{row.streetName}</TableCell>
+                  <TableCell className="px-6 py-4 whitespace-nowrap">{row.streetNumber}</TableCell>
+                  <TableCell className="px-6 py-4 whitespace-nowrap">{row.areaSize}</TableCell>
+                  <TableCell className="px-6 py-4 whitespace-nowrap">{row.hasAc ? "Si" : "No"}</TableCell>
+                  <TableCell className="px-6 py-4 whitespace-nowrap">{row.yearBuilt}</TableCell>
+                  <TableCell className="px-6 py-4 whitespace-nowrap">$ {row.rentPrice}</TableCell>
+                  <TableCell className="px-6 py-4 whitespace-nowrap">{row.dateAvailable}</TableCell>
 
-                {type === "all-flats" && (
-                  <TableCell className="px-6 py-4 whitespace-nowrap">
-                    {!row.favorite && (
-                      <Button onClick={() => addFavorite(row.id)}>
-                       <AddIcon/>
+                  {type === "all-flats" && (
+                    <TableCell className="px-6 py-4 whitespace-nowrap">
+                      {!row.favorite && (
+                        <Button onClick={() => addFavorite(row.id)}>
+                          <AddIcon />
+                        </Button>
+                      )}
+                      {row.favorite && (
+                        <Button onClick={() => removeFavorite(row.favorite)}>
+                          <CancelIcon />
+                        </Button>
+                      )}
+                      <Button href={`/flat/${row.id}`}>
+                        <VisibilityIcon />
                       </Button>
-                    )}
-                    {row.favorite && (
-                      <Button onClick={() => removeFavorite(row.favorite)}>
-                      <CancelIcon/>  
-                      </Button>
-                    )}
-                    <Button href={`/flat/${row.id}`}>
-                      <VisibilityIcon />
-                    </Button>
-                  </TableCell>
-                )}
+                    </TableCell>
+                  )}
 
-                
-                    {type === "my-flats" && (
-                      <TableCell className="px-6 py-4 whitespace-nowrap">
+                  {type === "my-flats" && (
+                    <TableCell className="px-6 py-4 whitespace-nowrap">
                       <ButtonGroup
                         variant="text"
                         size="small"
                         aria-label="Basic button group"
                       >
-                        
-                    <Button href={`/flat/${row.id}`}>
-                      <VisibilityIcon />
-                    </Button>
-                      <Button href={`/flat/edit/${row.id}`}>
-                        <EditIcon></EditIcon>
-                      </Button>
+                        <Button href={`/flat/${row.id}`}>
+                          <VisibilityIcon />
+                        </Button>
+                        <Button href={`/flat/edit/${row.id}`}>
+                          <EditIcon></EditIcon>
+                        </Button>
 
-                      <Button onClick={() => removeMyFlat(row.id)}>
-                      <DeleteIcon />
-                    </Button>
-                    </ButtonGroup>
+                        <Button onClick={() => removeMyFlat(row.id)}>
+                          <DeleteIcon />
+                        </Button>
+                      </ButtonGroup>
                     </TableCell>
-                    )}
-                    {type === "favorites-flats" && (
-                      <TableCell className="px-6 py-4 whitespace-nowrap">
+                  )}
+                  {type === "favorites-flats" && (
+                    <TableCell className="px-6 py-4 whitespace-nowrap">
                       <ButtonGroup
                         variant="text"
                         size="small"
                         aria-label="Basic button group"
                       >
-                      
-                      <Button onClick={() => removeFavorite(row.favorite)}>
-                      <DeleteIcon />
-                    </Button>
-                    </ButtonGroup>
+                        <Button onClick={() => removeFavorite(row.favorite)}>
+                          <DeleteIcon />
+                        </Button>
+                      </ButtonGroup>
                     </TableCell>
-                    )}
-                  
-                  
-
-                 
-              
-              </TableRow>
-            ))}
+                  )}
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
+        <div className="flex justify-center mt-4">
+          <Pagination
+            count={Math.ceil(data.length / itemsPerPage)}
+            page={page}
+            onChange={handleChangePage}
+            variant="outlined"
+            shape="rounded"
+          />
+        </div>
       </TableContainer>
     );
   };

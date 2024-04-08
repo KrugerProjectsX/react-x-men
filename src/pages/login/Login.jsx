@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { decode } from "../../utilities/encryption";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 const Login = () => {
   localStorage.clear();
@@ -25,8 +25,7 @@ const Login = () => {
     setIsProgress(true);
     const { email, password } = data;
     try {
-   
-   const querySnapshot = await getDocs(
+      const querySnapshot = await getDocs(
         query(usersRef, where("email", "==", email))
       );
       if (!querySnapshot.empty) {
@@ -37,8 +36,8 @@ const Login = () => {
           setErrorAlert("Usuario o Contraseña incorrecta.");
           return;
         }
-    
-        let userPasword=decode(user.password)
+
+        let userPasword = decode(user.password);
         if (userPasword !== password) {
           setErrorAlert("Usuario o Contraseña incorrecta.");
           return;
@@ -50,15 +49,15 @@ const Login = () => {
           Swal.fire({
             title: "Ingreso Correcto!",
             text: "Se autentificado correctamente.",
-            icon: "success"
+            icon: "success",
           });
           navigate("/dashboard", { replace: true });
         }
-      }else{
+      } else {
         Swal.fire({
           title: "Error!",
           text: "Aún no se encuentra Registrado!",
-          icon: "error"
+          icon: "error",
         });
       }
     } catch (error) {
@@ -69,7 +68,15 @@ const Login = () => {
 
   return (
     <>
-      <h1 className="text-3xl font-semibold text-center mb-4">Login</h1>
+     <div className="bg-blue-300 min-h-screen">
+    <div className="w-full h-full grid grid-cols-1 gap-1 p-1">
+      <div className={"flex justify-center items-center mb-8 mt-20"}>
+        <img
+          className="pointer-events-none w-32 h-32 lg:w-40 md:w-32 rounded-full"
+          src="/src/assets/logo.svg"
+          alt="My SVG"
+        />
+      </div>
       <Box
         component="form"
         onSubmit={handleSubmit(onSubmit)}
@@ -115,13 +122,13 @@ const Login = () => {
           type="submit"
           fullWidth
           variant="contained"
-          className="w-full "
+          className="w-full"
           sx={{ backgroundColor: "#4CAF50", color: "white" }}
         >
           {isProgress ? "Iniciando sesión..." : "Iniciar sesión"}
         </Button>
         <div className="flex justify-center mt-3">
-          <span className=" text-center">
+          <span className="text-center">
             Aún no te has registrado{" "}
             <a href="/register" className="text-blue-500 hover:underline">
               Registrarse
@@ -139,6 +146,8 @@ const Login = () => {
           </Alert>
         )}
       </Box>
+    </div>
+  </div>
     </>
   );
 };

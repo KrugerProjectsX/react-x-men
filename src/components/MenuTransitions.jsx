@@ -56,7 +56,7 @@ export default function MenuTransitions({ user, setUser }) {
           data-dropdown-toggle="dropdownAvatarName"
           className="flex items-center text-sm pe-1 font-medium rounded-full md:me-0 text-gray-900"
         >
-          <img className="ml-1 w-8 h-8 me-2 rounded-full" src="../assets/user.png"  alt="user photo" />{" "}
+          <img className="ml-1 w-8 h-8 me-2 rounded-full" src="/src/assets/user.png"  alt="user photo" />{" "}
           <span id="nameUserLog"></span>
           {user && (
             <span>

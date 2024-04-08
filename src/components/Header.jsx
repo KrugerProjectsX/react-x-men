@@ -32,8 +32,8 @@ export default function Header() {
             <AppBar position="static">
                 <Toolbar className={'bg-white'}>
                     <div className={'flex items-center m-4'}>
-                       
-                        <PersonIcon className="pointer-events-none my-auto w-24 lg:w-40 md:w-32"></PersonIcon>
+                        <img className="pointer-events-none my-auto w-16 h-16 lg:w-40 md:w-32 rounded-md" src='/src/assets/logo.svg' alt="My SVG"/>
+                        
                     </div>
                     <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
                     </Typography>
