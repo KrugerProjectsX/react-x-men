@@ -1,7 +1,9 @@
 import Header from "../../components/Header";
 import UserFormHook from "../../components/UserFormHook";
+import checkUserLogged from "../../services/actions";
 
 const ProfileUpdate = () => {
+  checkUserLogged();
   return (
     <>
       <Header></Header>

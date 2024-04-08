@@ -3,8 +3,10 @@ import Header from '../../components/Header'
 import FlatForm from '../../components/FlatForm'
 import Messages from '../../components/Messages'
 import { useParams } from 'react-router-dom'
+import checkUserLogged from '../../services/actions'
 
 const Flat = () => {
+  checkUserLogged();
     let { idFlat }  = useParams();
   return (
     <>

@@ -1,7 +1,9 @@
 import FlatTable from "../../components/FlatTable";
 import Header from "../../components/Header";
+import checkUserLogged from "../../services/actions";
 
 const FlatsFavorites = () => {
+  checkUserLogged();
   return (
     <>
     <div>

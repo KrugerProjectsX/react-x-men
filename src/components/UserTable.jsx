@@ -6,7 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { useEffect, useState } from "react";
-import { getDocs, query, where, collection } from "firebase/firestore";
+import { getDocs, query, where, collection, doc, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { Box, MenuItem, Select, Slider, TextField } from "@mui/material";
 import Typography from "@mui/material/Typography";
@@ -15,6 +15,8 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CircularProgress from '@mui/material/CircularProgress';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from "@mui/icons-material/Edit";
+import Swal from "sweetalert2";
 
 export default function UsersTable() {
   const ref = collection(db, "users");
@@ -134,6 +136,21 @@ export default function UsersTable() {
     }
     
 
+    const removeUser = async (id) => {
+      const refRemoveFav = await doc(db, "users", id);
+      let result = await Swal.fire({
+        title: "Estás seguro que desea Eliminar este Usuario?",
+        showDenyButton: true,
+        confirmButtonText: "Si",
+        denyButtonText: `No`,
+      });
+      if (result.isConfirmed) {
+        await deleteDoc(refRemoveFav);
+        window.location.reload();
+      } else if (result.isDenied) {
+        Swal.fire("No se a podido eliminar.", "", "info");
+      }
+    };
 
     return (
       <TableContainer>
@@ -209,10 +226,10 @@ export default function UsersTable() {
                 <TableCell className="px-6 py-4 whitespace-nowrap">
                 <ButtonGroup variant="text"  size="small" aria-label="Basic button group">
                 <Button href={`/profile/edit/${row.id}`} >
-                  <VisibilityIcon />
+                <EditIcon/>
                 </Button>
-                <Button  >
-                  <DeleteIcon />
+                <Button onClick={() => removeUser(row.id)} >
+                  <DeleteIcon  />
                 </Button>
                 </ButtonGroup>
                 </TableCell>

@@ -80,6 +80,7 @@ const FlatTable = ({ type }) => {
     navigate("/my-favorites-flats", { replace: true });
     setFlag(!flag);
   };
+  
   const removeFavorite = async (id) => {
     const refRemoveFav = await doc(db, "favorites", id);
     let result = await Swal.fire({
@@ -88,10 +89,8 @@ const FlatTable = ({ type }) => {
       confirmButtonText: "Si",
       denyButtonText: `No`,
     });
-    console.log(result, "remove");
     if (result.isConfirmed) {
       await deleteDoc(refRemoveFav);
-      //navigate("/dashboard", { replace: true })
       window.location.reload();
     } else if (result.isDenied) {
       Swal.fire("Changes are not saved", "", "info");
@@ -188,22 +187,14 @@ const FlatTable = ({ type }) => {
               >
                 Fecha Disponible
               </TableCell>
-              {(type === "all-flats" || type === "favorite-flats") && (
-                <TableCell
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  align="right"
-                ></TableCell>
-              )}
+             
               <TableCell
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 align="right"
               >
                 Acciones
               </TableCell>
-              <TableCell
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                align="right"
-              ></TableCell>
+              
             </TableRow>
           </TableHead>
           <TableBody>
@@ -247,6 +238,10 @@ const FlatTable = ({ type }) => {
                         size="small"
                         aria-label="Basic button group"
                       >
+                        
+                    <Button href={`/flat/${row.id}`}>
+                      <VisibilityIcon />
+                    </Button>
                       <Button href={`/flat/edit/${row.id}`}>
                         <EditIcon></EditIcon>
                       </Button>
