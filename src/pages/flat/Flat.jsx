@@ -5,13 +5,13 @@ import Messages from '../../components/Messages'
 import { useParams } from 'react-router-dom'
 
 const Flat = () => {
-    let { id }  = useParams();
+    let { idFlat }  = useParams();
   return (
     <>
     <Header/>
     <h1>View Flat</h1>
-    <FlatForm type={'view'} id={id}/>
-    {/* <Messages flatId={id}/> */}
+    <FlatForm type={'view'} id={idFlat}/>
+    <Messages flatId={idFlat}/> 
     </>
     )
 }

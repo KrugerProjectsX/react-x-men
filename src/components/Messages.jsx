@@ -2,7 +2,8 @@ import {useEffect, useRef, useState} from "react";
 import {addDoc, collection, doc, getDoc, getDocs, query, where} from "firebase/firestore";
 import {db} from "../firebase";
 import {Box, Button, TextField} from "@mui/material";
-const Messages = () => {
+const Messages = ({flatId}) => {
+
     const ref = doc(db, "flats", flatId);
     const refMessages = collection(db, "messages");
 
@@ -13,14 +14,19 @@ const Messages = () => {
     const messageInput= useRef('');
     
     const getMessages = async () => {
+        
         const search = query(refMessages, where("flatId", "==", flatId));
         const dataMessages = await getDocs(search);
         const rows = dataMessages.docs.map((item) => {
             return { ...item.data(), id: item.id }
         });   
+        console.log(rows)
         setMessages(rows);
     }
-    
+    useEffect(() =>{
+        getMessages();
+    },[]);
+   
     const getFlat = async () => {
         const userId = JSON.parse(localStorage.getItem('user_logged'));
         const dataFlat = await getDoc(ref);
@@ -36,12 +42,6 @@ const Messages = () => {
         setFlat(responseFlat)
     }
     
-    // useEffect(
-    //     () => {
-    //         getFlat();
-    //     }, []
-    // )
-    
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -53,7 +53,7 @@ const Messages = () => {
             
         }
         await addDoc(refMessages, data);
-
+        getMessages();
     }
     return (
         
@@ -78,7 +78,7 @@ const Messages = () => {
                 </Box>
             </>
             }
-            { type === 'view' && 
+            { 
                 <>
                     {messages.map((item) => {
                         return (

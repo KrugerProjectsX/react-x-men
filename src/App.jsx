@@ -11,7 +11,7 @@ import Profile from "./pages/user/Profile";
 
 import RegisterUser from "./pages/login/RegisterUser";
 
-import UserRegister from "./pages/login/UserRegister";
+
 import AddFlats from "./pages/flat/AddFlats";
 import Flat from "./pages/flat/Flat";
 import ProfileUpdate from "./pages/user/ProfileUpdate";
@@ -28,13 +28,13 @@ function App() {
         <Route path="/profile/:userId" element={<Profile />} />
         <Route path={"/profile/edit/:userId"} element={<ProfileUpdate/>}/>
         <Route path="/register" element={<RegisterUser></RegisterUser>} />
-        <Route path="/userregister" element={<UserRegister />} />
         <Route path="/flats" element={<Flats />} />
         <Route path="/myflats" element={<MyFlats />} />
         <Route path="/addflat" element={<AddFlats />} />
         <Route path={"/flat/:idFlat"} element={<Flat />} />
         <Route path={"/flat/edit/:idFlat"} element={<FlatUpdate />} />
         <Route path={"/my-favorites-flats"} element={<FlatsFavorites/>}/>
+       
       </Routes>
     </>
   );

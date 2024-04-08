@@ -6,7 +6,7 @@ const FlatsFavorites = () => {
     <>
     <div>
       <Header></Header>
-            <h1>FlatsFavorites</h1>
+            <h2 className="text-center text-3xl font-bold text-blue-400 mt-8"> Favoritos Pisos</h2>
             <FlatTable type={'favorites-flats'}/>
         </div>
     </>
