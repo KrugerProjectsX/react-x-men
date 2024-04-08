@@ -110,8 +110,6 @@ export const favoriteFlat = createAsyncThunk(
   }
 );
 
-
-
   const FlatSlice = createSlice({
     name: 'Flats',
     initialState: {

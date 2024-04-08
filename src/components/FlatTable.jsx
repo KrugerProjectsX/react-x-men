@@ -8,6 +8,7 @@ import {
   TableHead,
   TableRow,
   Button,
+  TextField,
 } from "@mui/material";
 import Swal from "sweetalert2";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -40,6 +41,13 @@ const FlatTable = ({ type }) => {
   const [showAlert, setShowAlert] = useState(false);
   const [flag, setFlag] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [filters, setFilters] = useState({
+    city: "",
+    minAreaSize: "",
+    maxAreaSize: "",
+    minRentPrice: "",
+    maxRentPrice: ""
+});
 
   const dispatch = useDispatch();
 
@@ -143,6 +151,14 @@ const FlatTable = ({ type }) => {
     }
   });
 
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters({
+        ...filters,
+        [name]: value
+    });
+};
+
   const tableFlats = () => {
     if (loading) {
       return (
@@ -178,6 +194,7 @@ const FlatTable = ({ type }) => {
     }
 
     return (
+      
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead className="bg-gray-50" >
@@ -272,7 +289,7 @@ const FlatTable = ({ type }) => {
                   <TableCell className="px-6 py-4 whitespace-nowrap">{row.areaSize}</TableCell>
                   <TableCell className="px-6 py-4 whitespace-nowrap">{row.hasAc ? "Si" : "No"}</TableCell>
                   <TableCell className="px-6 py-4 whitespace-nowrap">{row.yearBuilt}</TableCell>
-                  <TableCell className="px-6 py-4 whitespace-nowrap">$ {row.rentPrice}</TableCell>
+                  <TableCell className="px-6 py-4 whitespace-nowrap"><strong>$</strong> {row.rentPrice}</TableCell>
                   <TableCell className="px-6 py-4 whitespace-nowrap">{row.dateAvailable}</TableCell>
 
                   {type === "all-flats" && (
@@ -351,7 +368,58 @@ const FlatTable = ({ type }) => {
      </button>
       )}
 
+<div style={{ textAlign: 'center' }}>
+            <div style={{ marginBottom: '10px' }}>
+                <TextField
+                    name="city"
+                    label="Ciudad"
+                    variant="outlined"
+                    size="small"
+                    value={filters.city}
+                    onChange={handleFilterChange}
+                    style={{ marginRight: '10px' }}
+                />
+                <TextField
+                    name="minAreaSize"
+                    label="Área Mínima"
+                    variant="outlined"
+                    size="small"
+                    value={filters.minAreaSize}
+                    onChange={handleFilterChange}
+                    style={{ marginRight: '10px' }}
+                />
+                <TextField
+                    name="maxAreaSize"
+                    label=" Área Max"
+                    variant="outlined"
+                    size="small"
+                    value={filters.maxAreaSize}
+                    onChange={handleFilterChange}
+                    style={{ marginRight: '10px' }}
+                />
+                <TextField
+                    name="minRentPrice"
+                    label="Renta Min"
+                    variant="outlined"
+                    size="small"
+                    value={filters.minRentPrice}
+                    onChange={handleFilterChange}
+                    style={{ marginRight: '10px' }}
+                />
+                <TextField
+                    name="maxRentPrice"
+                    label="Renta Max"
+                    variant="outlined"
+                    size="small"
+                    value={filters.maxRentPrice}
+                    onChange={handleFilterChange}
+                    style={{ marginRight: '10px' }}
+                />
+                
+            </div>
+            </div>
       {tableFlats()}
+    
     </div>
   );
 };
