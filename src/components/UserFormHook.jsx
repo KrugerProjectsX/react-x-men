@@ -129,7 +129,6 @@ export default function UserFormHook({ type }) {
 
           let userPasword = decode(user.password);
           if (userPasword !== data.password) {
-            console.log("Usuario o Contraseña incorrecta.");
             setErrorAlert("Usuario o Contraseña incorrecta.");
             return;
           }
@@ -158,7 +157,6 @@ export default function UserFormHook({ type }) {
   };
 
   const inputRole = () => {
-    console.log(roleLoged)
     if (roleLoged === "admin" || !roleLoged) {
       return (
         <TextField

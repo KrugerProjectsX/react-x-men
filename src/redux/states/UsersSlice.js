@@ -13,7 +13,6 @@ export const addUserToFirestore = createAsyncThunk(
       );
 
       if(!querySnapshot.empty){
-        console.log("error")
         throw new Error("Email existe");
       }
       const addUserRef = await addDoc(collection(db,'users'),user);
@@ -52,7 +51,6 @@ export const fetchUsers = createAsyncThunk(
  export const updateUser=createAsyncThunk(
   'user/updateUsers',
   async(editedUser)=>{
-    console.log(editedUser,"user");
     const users = await getDocs(collection(db,'users'));
     for(let snap of users.docs){
       if(snap.id === editedUser.id){

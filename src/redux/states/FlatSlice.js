@@ -79,9 +79,7 @@ export const fetchFlats = createAsyncThunk(
 export const updateFlat=createAsyncThunk(
   'flat/updateflats',
   async(editedFlat)=>{
-    console.log( editedFlat.id, "idflat")
     const flats = await getDocs(collection(db,'flats'));
-    console.log(flats)
     for(let snap of flats.docs){
       if(snap.id === editedFlat.id){
         const flatRef = doc(db,'flats', snap.id);

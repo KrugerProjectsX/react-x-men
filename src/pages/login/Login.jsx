@@ -29,7 +29,6 @@ const Login = () => {
    const querySnapshot = await getDocs(
         query(usersRef, where("email", "==", email))
       );
-      console.log("vacio"+querySnapshot.empty); 
       if (!querySnapshot.empty) {
         const user = querySnapshot.docs[0].data();
         const userId = querySnapshot.docs[0].id;
@@ -41,7 +40,6 @@ const Login = () => {
     
         let userPasword=decode(user.password)
         if (userPasword !== password) {
-          console.log("Usuario o Contraseña incorrecta.");
           setErrorAlert("Usuario o Contraseña incorrecta.");
           return;
         }
@@ -64,7 +62,6 @@ const Login = () => {
         });
       }
     } catch (error) {
-      console.error("Error al iniciar sesión:", error);
       setErrorAlert("Usuario o Contraseña incorrecta.");
     }
     setIsProgress(false);

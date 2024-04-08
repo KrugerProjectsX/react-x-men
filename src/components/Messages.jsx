@@ -20,7 +20,6 @@ const Messages = ({flatId}) => {
         const rows = dataMessages.docs.map((item) => {
             return { ...item.data(), id: item.id }
         });   
-        console.log(rows)
         setMessages(rows);
     }
     useEffect(() =>{
