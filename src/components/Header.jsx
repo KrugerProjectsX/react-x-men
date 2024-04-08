@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import MenuTransitions from "./MenuTransitions";
 import { getUserLogged } from '../services/users.js';
 import { Link } from 'react-router-dom';
+import PersonIcon from '@mui/icons-material/Person';
 
 
 
@@ -31,8 +32,8 @@ export default function Header() {
             <AppBar position="static">
                 <Toolbar className={'bg-white'}>
                     <div className={'flex items-center m-4'}>
-                        <img className="pointer-events-none my-auto w-24 lg:w-40 md:w-32"  alt="My SVG"/>
-
+                       
+                        <PersonIcon className="pointer-events-none my-auto w-24 lg:w-40 md:w-32"></PersonIcon>
                     </div>
                     <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
                     </Typography>

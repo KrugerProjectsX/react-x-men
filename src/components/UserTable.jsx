@@ -17,6 +17,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from "@mui/icons-material/Edit";
 import Swal from "sweetalert2";
+import Pagination from '@mui/material/Pagination';
 
 export default function UsersTable() {
   const ref = collection(db, "users");
@@ -98,6 +99,29 @@ export default function UsersTable() {
     getData();
   }, [userType, flatsCounter, valueSlider]);
 
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const removeUser = async (id) => {
+    const refRemoveFav = await doc(db, "users", id);
+    let result = await Swal.fire({
+      title: "Estás seguro que desea Eliminar este Usuario?",
+      showDenyButton: true,
+      confirmButtonText: "Si",
+      denyButtonText: `No`,
+    });
+    if (result.isConfirmed) {
+      await deleteDoc(refRemoveFav);
+      window.location.reload();
+    } else if (result.isDenied) {
+      Swal.fire("No se a podido eliminar.", "", "info");
+    }
+  };
+
   const tablaUsers = () => {
     if(loading){
       return (<div className="flex justify-center items-center h-screen">
@@ -136,109 +160,70 @@ export default function UsersTable() {
     }
     
 
-    const removeUser = async (id) => {
-      const refRemoveFav = await doc(db, "users", id);
-      let result = await Swal.fire({
-        title: "Estás seguro que desea Eliminar este Usuario?",
-        showDenyButton: true,
-        confirmButtonText: "Si",
-        denyButtonText: `No`,
-      });
-      if (result.isConfirmed) {
-        await deleteDoc(refRemoveFav);
-        window.location.reload();
-      } else if (result.isDenied) {
-        Swal.fire("No se a podido eliminar.", "", "info");
-      }
-    };
-
     return (
-      <TableContainer>
-        <Table
-          className="min-w-full divide-y divide-gray-200"
-          aria-label="simple table"
-        >
-          <TableHead className="bg-gray-50">
-            <TableRow>
-              <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Nombre
-              </TableCell>
-              <TableCell
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                align="right"
-              >
-                Apellido
-              </TableCell>
-              <TableCell
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                align="right"
-              >
-                Email
-              </TableCell>
-              <TableCell
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                align="right"
-              >
-                Fecha Nacimiento
-              </TableCell>
-              <TableCell
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                align="right"
-              >
-                Role
-              </TableCell>
-              <TableCell
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                align="right"
-              >
-                
-                Cantidad Pisos
-              </TableCell>
-              <TableCell
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                align="right"
-              >
-                Acciones
+     
+    <div className="overflow-x-auto">
+    <TableContainer>
+      <Table className="min-w-full divide-y divide-gray-200" aria-label="simple table">
+        <TableHead className="bg-gray-50">
+          <TableRow>
+            <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Nombre
+            </TableCell>
+            <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">
+              Apellido
+            </TableCell>
+            <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">
+              Email
+            </TableCell>
+            <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">
+              Fecha Nacimiento
+            </TableCell>
+            <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">
+              Role
+            </TableCell>
+            <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">
+              Cantidad Pisos
+            </TableCell>
+            <TableCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" align="right">
+              Acciones
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody className="bg-white divide-y divide-gray-200">
+          {users.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((row) => (
+            <TableRow key={row.id}>
+              <TableCell className="px-6 py-4 whitespace-nowrap">{row.firstName}</TableCell>
+              <TableCell className="px-6 py-4 whitespace-nowrap">{row.lastName}</TableCell>
+              <TableCell className="px-6 py-4 whitespace-nowrap">{row.email}</TableCell>
+              <TableCell className="px-6 py-4 whitespace-nowrap">{row.birthDate}</TableCell>
+              <TableCell className="px-6 py-4 whitespace-nowrap">{row.role}</TableCell>
+              <TableCell className="px-6 py-4 whitespace-nowrap">{row.flats}</TableCell>
+              <TableCell className="px-6 py-4 whitespace-nowrap">
+                <ButtonGroup variant="text" size="small" aria-label="Basic button group">
+                  <Button href={`/profile/edit/${row.id}`}>
+                    <EditIcon />
+                  </Button>
+                  <Button onClick={() => removeUser(row.id)}>
+                    <DeleteIcon />
+                  </Button>
+                </ButtonGroup>
               </TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody className="bg-white divide-y divide-gray-200">
-            {users.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell className="px-6 py-4 whitespace-nowrap">
-                  {row.firstName}
-                </TableCell>
-                <TableCell className="px-6 py-4 whitespace-nowrap">
-                  {row.lastName}
-                </TableCell>
-                <TableCell className="px-6 py-4 whitespace-nowrap">
-                  {row.email}
-                </TableCell>
-                <TableCell className="px-6 py-4 whitespace-nowrap">
-                  {row.birthDate}
-                </TableCell>
-                <TableCell className="px-6 py-4 whitespace-nowrap">
-                  {row.role}
-                </TableCell>
-                <TableCell className="px-6 py-4 whitespace-nowrap">
-                  {row.flats}
-                </TableCell>
-                <TableCell className="px-6 py-4 whitespace-nowrap">
-                <ButtonGroup variant="text"  size="small" aria-label="Basic button group">
-                <Button href={`/profile/edit/${row.id}`} >
-                <EditIcon/>
-                </Button>
-                <Button onClick={() => removeUser(row.id)} >
-                  <DeleteIcon  />
-                </Button>
-                </ButtonGroup>
-                </TableCell>
-              
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+    <div className="flex justify-center mt-4">
+      <Pagination
+        count={Math.ceil(users.length / itemsPerPage)}
+        page={page}
+        onChange={handleChangePage}
+        variant="outlined"
+        shape="rounded"
+      />
+    </div>
+  </div>
     );
   };
 
